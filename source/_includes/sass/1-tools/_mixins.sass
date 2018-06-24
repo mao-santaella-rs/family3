@@ -1,0 +1,30 @@
+//========== MIXINS ==========//
+
+=placeholder($color)
+	&::-webkit-input-placeholder
+		color: $color
+	&:-moz-placeholder
+		color: $color
+	&::-moz-placeholder
+		color: $color
+	&:-ms-input-placeholder
+		color: $color
+
+=auto-height()
+	&:before
+		content: ""
+		display: table
+	&:after
+		content: ""
+		display: table
+		clear: both
+
+=paragraph()
+	font-family: $paragraph-font-family
+	font-weight: $paragraph-font-weight
+
+=heading()
+	font-family: $heading-font-family
+	font-weight: $heading-font-weight
+
+//========== FIN MIXINS ==========//
