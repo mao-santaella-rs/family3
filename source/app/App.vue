@@ -1,39 +1,21 @@
-<template>
-	<div id="app">
+<template lang="pug">
 
-		<router-view></router-view>
+	#app
+		router-view
 
-	</div>
 </template>
 
 <script>
 
 export default {
 	name: 'app',
-
-	components: {
-	},
-
 	data(){
 		return{
 		}
-	},
-
-	methods:{
-	},
-	
-	computed:{
-	},
-
-	created(){
-	},
-
-	mounted(){
 	}
-
 }
 </script>
 
-<style>
+<style lang="sass">
 
 </style>

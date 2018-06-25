@@ -6,10 +6,7 @@
 </template>
 
 <script>
-import vcomponent from '../components/Component.vue'
-// SI SE VAN A COMENTAR LOS IMPORTS SE TIENEN QUE PONER DEBAJO DE LOS QUE NO ESTAN COMENTADOS
-// import db from '../firebase/init'
-// import axios from 'axios'
+import vcomponent from '../components/FamilyTree.vue'
 
 export default {
 	name: 'home',
@@ -21,20 +18,7 @@ export default {
 	data(){
 		return{
 		}
-	},
-
-	methods:{
-	},
-	
-	computed:{
-	},
-
-	created(){
-	},
-
-	mounted(){
 	}
-
 }
 </script>
 
