@@ -1,18 +1,23 @@
 <template lang="pug">
 
-	#home
+	#edit
+		vaddcontent
 		vfamilytree
 
 </template>
 
 <script>
+import vaddcontent from '../components/AddContent.vue'
 import vfamilytree from '../components/FamilyTree.vue'
 
 export default {
-	name: 'home',
+	name: 'edit',
+
 	components: {
-		vfamilytree,
+		vaddcontent,
+		vfamilytree
 	},
+
 	data(){
 		return{
 		}

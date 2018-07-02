@@ -1,18 +1,17 @@
 <template lang="pug">
 	.fmly-wrpr
 		.line
-		FamilyNode(:datos='datos',:personas="personas")
+		vfamilynode(:datos='datos',:personas="personas")
 </template>
 
 <script>
-import Vue from "vue";
 import db from "../firebase/init";
-import FamilyNode from "./FamilyNode.vue";
+import vfamilynode from "./FamilyNode.vue";
 
 export default {
-	name: "FamilyTree",
+	name: "vfamilytree",
 	components: {
-		FamilyNode
+		vfamilynode
 	},
 	data() {
 		return {
@@ -24,7 +23,7 @@ export default {
 	methods: {
 		getData() {
 			const app = this;
-			let dbObject = {};
+			let dbObject = [];
 			db.collection('people').orderBy("row").onSnapshot(snapshot => {
 				snapshot.forEach(doc => {
 					dbObject[doc.id] = doc.data();
@@ -50,10 +49,10 @@ export default {
 			// console.log(lowestRow);
 
 			for (let key in app.personas) {
-				console.log("***PERSONA MF: " + app.personas[key].name);
+				// console.log("***PERSONA MF: " + app.personas[key].name);
 				// si es = a lowest row
 				if(app.personas[key].row == lowestRow) {
-					console.log(app.personas[key].name + " lowest ROW");
+					// console.log(app.personas[key].name + " lowest ROW");
 					
 					agregarTreeObject(treObject, "", key, true);
 
@@ -64,7 +63,7 @@ export default {
 					// si encuentra mother en usados
 					if (findUsed(app.personas[key].conections.mother)) {
 						let mother = app.personas[key].conections.mother;
-						console.log(app.personas[key].name + " MOTHER: " + app.personas[mother].name);
+						// console.log(app.personas[key].name + " MOTHER: " + app.personas[mother].name);
 						
 						let newPath = usedObject[mother][0] + ".relatives.familia" + (flyCount + 1);
 						agregarTreeObject(treObject, usedObject[mother][0], key, "familia" + (flyCount + 1), true);
@@ -75,7 +74,7 @@ export default {
 					// si encuentra father in usados
 					else if (findUsed(app.personas[key].conections.father)) {
 						let father = app.personas[key].conections.father;
-						console.log(app.personas[key].name + " FATHER: " + app.personas[father].name);
+						// console.log(app.personas[key].name + " FATHER: " + app.personas[father].name);
 						
 						let newPath = usedObject[father][0] + ".relatives.familia" + (flyCount + 1);
 						agregarTreeObject(treObject, usedObject[father][0], key, "familia" + (flyCount + 1), true);
@@ -89,15 +88,13 @@ export default {
 			}
 
 			for (let key in app.personas) {
-				console.log("***PERSONA C: " + app.personas[key].name);
+				// console.log("***PERSONA C: " + app.personas[key].name);
 				if (!usedObject[key]) {
 					// si encuentra spouse in usados
 					if (findUsed(app.personas[key].conections.spouse)) {
 						let spouse = app.personas[key].conections.spouse;
-						console.log(app.personas[key].name + " SI encontre SPOUSE: " + app.personas[spouse].name);
-						// agrego spouse a usados
-						// usedObject[key].push(usedObject[app.personas[key].conections.spouse]);
-			
+						// console.log(app.personas[key].name + " SI encontre SPOUSE: " + app.personas[spouse].name);
+						
 						agregarTreeObject(treObject, usedObject[spouse][0], key);
 						usedObject[key] = [];
 						usedObject[key].push(usedObject[spouse][0]);
@@ -109,10 +106,10 @@ export default {
 			app.datos = treObject
 			
 			function consoleObj(){
-				console.log("usedObject");
-				console.log(usedObject);
-				console.log("treeObject");
-				console.log(treObject);
+				// console.log("usedObject");
+				// console.log(usedObject);
+				// console.log("treeObject");
+				// console.log(treObject);
 			}
 
 			function findUsed(key) {
@@ -137,7 +134,7 @@ export default {
 
 			function agregarTreeObject(obj, path, key, familyId = false, relation = false) {
 				//separa el string en un array
-				console.log("path: " + path);
+				// console.log("path: " + path);
 				let parts = path.split(".");
 				// console.log(parts);
 				
@@ -151,7 +148,7 @@ export default {
 					// si relation es true(realtive)
 					else if(relation){
 						let familyObj = parts[0];
-						console.log(obj[familyObj]);
+						// console.log(obj[familyObj]);
 						
 						if(!obj[familyObj].relatives){
 							// creo una propiedad 'relatives' en el objeto provisional
@@ -185,97 +182,12 @@ export default {
 	created() {
 		this.getData()
 	},
-	mounted() {}
+	mounted() {
+		// this.orderData()
+	}
 };
 </script>
 
 <style lang="sass">
 
-.line
-	position: absolute
-	top: 0
-	right: 0
-	bottom: 0
-	left: 0
-	svg
-		display: block
-		stroke: white
-		fill: none
-		stroke-width: 2px
-
-.fmly-wrpr
-	display: inline-block
-	position: relative
-	&::after
-		clear: both
-		content: ""
-		display: block
-
-.fmly
-	display: flex
-	flex-wrap: wrap
-	justify-content: center
-
-.row
-	width: 100%
-	display: flex
-	align-items: flex-start
-	flex-wrap: nowrap
-	padding-top: 50px
-	&::after
-		clear: both
-		content: ""
-		display: block
-
-.couple
-	display: flex
-	position: relative
-	&:before
-		content: ""
-		display: block
-		height: 2px
-		width: 100px
-		background-color: white
-		position: absolute
-		top: 50%
-		left: 50%
-		transform: translate(-50%, -50%)
-	.ref
-		height: 20px
-		width: 20px
-		border-radius: 50%
-		background-color: white
-		position: absolute
-		top: 50%
-		left: 50%
-		transform: translate(-50%, -50%)
-
-.person
-	position: relative
-	display: flex
-	margin: 0 25px
-
-.person-item
-	width: 170px
-	min-width: 120px
-	background-color: white
-	border-radius: 10px
-	overflow: hidden
-	box-shadow: 0px 3px 20px 0px rgba(0, 0, 0, 0.7)
-
-.person-item__img img
-	display: block
-	width: 100%
-
-.person-item__info
-	padding: 10px
-	font-size: 0.8rem
-	line-height: 1.3em
-
-.person-item__info__name
-	letter-spacing: 0.5px
-	font-weight: 700
-
-.person-item__info__nickname, .person__info__year
-	font-weight: 300
 </style>
