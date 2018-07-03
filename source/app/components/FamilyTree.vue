@@ -21,21 +21,21 @@ export default {
 	},
 	watch: {},
 	methods: {
-		getData() {
-			const app = this;
-			let dbObject = [];
-			db.collection('people').orderBy("row").onSnapshot(snapshot => {
-				snapshot.forEach(doc => {
-					dbObject[doc.id] = doc.data();
-				});
-				app.personas = dbObject;
-				// console.log(dbObject);
-				app.orderData()
-			});
-		},
+		// getData() {
+		// 	const app = this;
+		// 	let dbObject = [];
+		// 	db.collection('people').orderBy("row").onSnapshot(snapshot => {
+		// 		snapshot.forEach(doc => {
+		// 			dbObject[doc.id] = doc.data();
+		// 		});
+		// 		app.personas = dbObject;
+		// 		// console.log(dbObject);
+		// 		// app.orderData()
+		// 	});
+		// },
 		
 		orderData() {
-			console.clear();
+			// console.clear();
 			const app = this;
 			let flyCount = 1;
 			let usedObject = {};
@@ -180,7 +180,7 @@ export default {
 		}
 	},
 	created() {
-		this.getData()
+		// this.getData()
 	},
 	mounted() {
 		// this.orderData()
