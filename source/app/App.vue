@@ -1,21 +1,28 @@
 <template lang="pug">
 
 	#app
+		vHeader
 		router-view
+		vFamilyTree
+
 
 </template>
 
 <script>
+import vHeader from './components/Header.vue'
+import vFamilyTree from './components/FamilyTree.vue'
 export default {
-	name: 'app',
+	name: "app",
+	components: {
+		vFamilyTree,vHeader
+	},
 	data(){
 		return{
 		}
 	},
-	methods:{
-	},
 	created() {
 		this.$store.dispatch('getData')
+		this.$store.dispatch('sessionV')
 	}
 }
 </script>

@@ -9,7 +9,15 @@ export const store = new Vuex.Store({
 	state: {
 		db: db,
 		personas: {},
-		family: {}
+		family: {},
+		femenine: {},
+		masculine: {},
+		session: {
+			'login': null,
+			'alias': null,
+			'uid': null,
+			'email': null
+		}
 	},
 	mutations: {
 		storePersonasData: (state,val) => {
@@ -17,22 +25,38 @@ export const store = new Vuex.Store({
 		},
 		storeFamiliaData: (state, val) => {
 			state.family = val
+		},
+		storeSessionData: (state, val) => {
+			state.session = val
+		},
+		storeSexMasculineData: (state, val) => {
+			state.masculine = val
+		},
+		storeSexFemenineData: (state, val) => {
+			state.femenine = val
 		}
 	},
 	actions:{
 		getData: context => {
 			let dbObject = {};
+			let objectM = {};
+			let objectF = {};
 			context.state.db.collection('people').orderBy("row").onSnapshot(snapshot => {
 				snapshot.forEach(doc => {
 					dbObject[doc.id] = doc.data()
+					if (doc.data().sex == "m"){
+						objectM[doc.id] = doc.data()
+					} else {
+						objectF[doc.id] = doc.data()
+					}
 				})
 				context.commit('storePersonasData', dbObject)
+				context.commit('storeSexMasculineData', objectM)
+				context.commit('storeSexFemenineData', objectF)
 				context.dispatch('orderData', dbObject)
 			})
 		},
 		orderData: (context,objectP) => {
-			// console.clear();
-			const app = context.state;
 			let flyCount = 1;
 			let usedObject = {};
 			let treObject = {
@@ -42,7 +66,7 @@ export const store = new Vuex.Store({
 			};
 
 			const lowestRow = objectP[Object.keys(objectP)[0]].row;
-			console.log(lowestRow);
+			// console.log(lowestRow);
 
 			for (let key in objectP) {
 				// console.log("***PERSONA MF: " + objectP[key].name);
@@ -173,6 +197,45 @@ export const store = new Vuex.Store({
 				// si 'path' tiene mas de un item se reinicia la misma funcion con un item menos pero con el objeto dentro de un nivel mas
 				return agregarTreeObject(obj[parts[0]], parts.slice(1).join("."), key, familyId, relation);
 			}
+		},
+		sessionV: context => {
+			firebase.auth().onAuthStateChanged( user => {
+				if (user) {
+					// User is signed in.
+					// console.log(user)
+					context.state.db.collection("users")
+						.where("user_id", "==", user.uid)
+						.get()
+						.then(querySnapshot => {
+							querySnapshot.forEach( doc => {
+								let userP = doc.data();
+								// console.log(doc.data());
+
+								let userObjectP = {
+									'login': true,
+									'alias': userP.alias,
+									'uid': user.uid,
+									'email': user.email
+								}
+								context.commit('storeSessionData', userObjectP)
+
+							});
+						})
+						.catch(error => {
+							console.log("Error getting document:", error);
+						});
+					
+				} else {
+					// No user is signed in.
+					let userObjectP = {
+						'login': false,
+						'alias': null,
+						'uid': null,
+						'email': null
+					}
+					context.commit('storeSessionData', userObjectP)
+				}
+			});
 		}
 	},
 	getters:{

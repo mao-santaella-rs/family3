@@ -1,21 +1,30 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
-import Edit from './views/Edit.vue'
+import LogIn from './components/auth/LogIn.vue'
+import SignUp from './components/auth/SignUp.vue'
+import AddContent from './components/AddContent.vue'
+
 
 Vue.use(Router)
 
 export default new Router({
 	routes: [
 		{
-			path: '/',
-			name: 'home',
-			component: Home
+			path: '/edit',
+			name: 'edit',
+			component: AddContent
 		},
 		{
-			path: '/add',
-			name: 'edit',
-			component: Edit
+			path: '/login',
+			name: 'login',
+			component: LogIn
+
+		},
+		{
+			path: '/signup',
+			name: 'signup',
+			component: SignUp
+
 		}
 	]
 })

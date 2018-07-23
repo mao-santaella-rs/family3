@@ -1,18 +1,20 @@
 <template lang="pug">
-	.row
+	.fmly-row
 		.fmly(v-if='datos', v-for='family in datos')
 			.couple
 				.ref
 				.person(v-for='(person,index) in family.couple', :key='person+index')
 					.person-item
 						.person-item__img(:style="{'background-image': 'url('+personas[person].img+')'}")
+							a(href).person-item__edit
 						.person-item__info
 							.person-item__info__name
 								span {{personas[person].name}}
 							.person-item__info__others
 								span.person-item__info__nickname {{personas[person].nickname}}
 								span.person-item__info__year(v-if="personas[person].dates.birth") {{dateTransform(personas[person].dates.birth.seconds)}}
-								
+						.person-item__action
+							a(href).person-item__add
 			vfamilynode(v-if='family.relatives', :datos='family.relatives', :personas="personas")
 </template>
 

@@ -5,11 +5,9 @@
 </template>
 
 <script>
-import db from "../firebase/init";
 import vfamilynode from "./FamilyNode.vue";
 
 export default {
-	name: "vfamilytree",
 	components: {
 		vfamilynode
 	},
@@ -27,10 +25,20 @@ export default {
 	},
 	methods: {},
 	created() {},
-	mounted() {}
+	mounted() {
+	}
 };
 </script>
 
 <style lang="sass">
-
+// // BOURBON
+// @import "../../../node_modules/bourbon/core/bourbon"
+// // TIPOGRAFIAS
+// @import "../../_includes/sass/1-tools/fonts"
+// // VARIABLES
+// @import "../../_includes/sass/1-tools/vars"
+// // MIXINS PROPIOS
+// @import "../../_includes/sass/1-tools/mixins"
+// // MODULES
+// @import "../../_includes/sass/3-modules/family-tree"
 </style>
