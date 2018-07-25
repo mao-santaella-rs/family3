@@ -10,5 +10,6 @@ const config = {
 const firebaseApp = firebase.initializeApp(config);
 
 firebaseApp.firestore().settings({timestampsInSnapshots:true});
+// firebaseApp.firestore().enablePersistence();
 
 export default firebaseApp.firestore();

@@ -3,17 +3,13 @@ import Router from 'vue-router'
 import LogIn from './components/auth/LogIn.vue'
 import SignUp from './components/auth/SignUp.vue'
 import AddContent from './components/AddContent.vue'
+import EditContent from './components/EditContent.vue'
 
 
 Vue.use(Router)
 
 export default new Router({
 	routes: [
-		{
-			path: '/edit',
-			name: 'edit',
-			component: AddContent
-		},
 		{
 			path: '/login',
 			name: 'login',
@@ -25,6 +21,16 @@ export default new Router({
 			name: 'signup',
 			component: SignUp
 
-		}
+		},
+		{
+			path: '/add',
+			name: 'add',
+			component: AddContent
+		},
+		{
+			path: '/edit/:id',
+			name: 'edit',
+			component: EditContent
+		},
 	]
 })

@@ -3,10 +3,10 @@
 		.fmly(v-if='datos', v-for='family in datos')
 			.couple
 				.ref
-				.person(v-for='(person,index) in family.couple', :key='person+index')
+				.person(v-for='(person,index,key) in family.couple', :key='person+index')
 					.person-item
 						.person-item__img(:style="{'background-image': 'url('+personas[person].img+')'}")
-							a(href).person-item__edit
+							router-link.person-item__edit(:to="{name: 'edit' , params: { id: person }}")
 						.person-item__info
 							.person-item__info__name
 								span {{personas[person].name}}

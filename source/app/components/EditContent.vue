@@ -5,7 +5,7 @@
 				.col-9
 					.card
 						.card-header
-							h5.card-title Agregar Familiar
+							h5.card-title Editar Familiar
 						.card-body
 							.row.form
 								.col-md-6.form-group
@@ -56,7 +56,7 @@
 
 <script>
 export default {
-	name: "addContent",
+	name: "editContent",
 	data() {
 	  return {
 		  name: null,
@@ -77,83 +77,54 @@ export default {
 		  feedback_text: null
 	  };
 	},
+	watch: {
+		// '$route': (to,from) => {
+		// 	this.loadData();
+		// }
+	},
 	methods: {
-		saveData(){
+		loadData(){
 			let app = this
-			app.feedback = null
+			let people = app.people
+			let personId = app.$route.params.id
+			let person = people[personId]
+			console.log(personId)
+			console.log(person)
+
+			app.name = person.name
+			app.nk_name = person.nickname
+			app.sex = person.sex
+			app.mother = person.conections.mother
+			app.father = person.conections.father
+			app.spouse = person.conections.spouse
+			app.image = person.img
 			
-			app.feedback = validacion()
-
-			if(!validacion()){
-				if(app.father){
-					app.row = app.$store.state.personas[app.father].row +1
-				}
-				if(app.mother){
-					app.row = app.$store.state.personas[app.mother].row +1
-				}
-				if (app.b_day_p) {
-					app.b_day = new Date(app.b_day_p)
-				}
-				if (app.d_day_p) {
-					app.d_day = new Date(app.d_day_p)
-				}
-
-				enviarDatos()
+			app.bio = person.bio
+			app.row = person.row
+			if(person.dates.birth) {
+				app.b_day_p = dateTransform(person.dates.birth)
+			}
+			// console.log("dead: " + person.dates.dead)
+			if(person.dates.dead){
+				app.d_day_p = dateTransform(person.dates.dead)
+				app.dead = true
 			}
 			
-
-			// functions
-
-			function enviarDatos(){
-				app.$store.state.db.collection("people").add({
-					name: app.name,
-					nickname: app.nk_name,
-					row: app.row,
-					sex: app.sex,
-					bio: app.bio,
-					img: app.image,
-					conections:{
-						father: app.father,
-						mother: app.mother,
-						spouse: app.spouse
-					},
-					dates:{
-						birth: app.b_day,
-						dead: app.d_day
-					}
-				})
-					.then(function(docRef) {
-						console.log("Document written with ID: ", docRef.id);
-					})
-					.catch(function(error) {
-						console.error("Error adding document: ", error);
-					});
+			function dateTransform(timestamp){
+				var a = new Date(0)
+				a.setSeconds(timestamp.seconds)
+				var year = a.getFullYear()
+				var month = a.getMonth() + 1
+				if(month < 10){
+					month = "0" + month
+				}
+				var date = a.getDate()
+				if(date < 10){
+					date = "0" + date
+				}
+				var time = year + '-' + month + '-' + date 
+				return time;
 			}
-
-			function validacion(){
-				let feedBack = ""
-				if(!app.name){
-					feedBack = "El nombre es un campo obligatorio<br>"
-				}
-				if(!app.nk_name){
-					feedBack = feedBack + "El apodo es un campo obligatorio<br>"
-				}
-				if(!app.sex){
-					feedBack = feedBack + "El sexo es un campo obligatorio<br>"
-				}
-				if(!app.sex){
-					feedBack = feedBack + "El sexo es un campo obligatorio<br>"
-				}
-				if(!app.father && !app.mother){
-					feedBack = feedBack + "Seleccione uno de los padres<br>"
-				}
-				if(feedBack == ""){
-					feedBack = null
-				}
-				return feedBack
-			}
-
-
 			
 		}
 	},
@@ -168,8 +139,21 @@ export default {
 			return this.$store.state.personas
 		}
 	},
-	created() {},
-	mounted() {}
+	created() {
+	},
+	updated() {
+		console.log("updated")
+		this.loadData()
+		console.log("-------")
+	},
+	beforeRouteUpdate (to, from, next) {
+    // react to route changes...
+		// don't forget to call next()
+		next()
+		console.log("beforeRouteUpdate")
+		this.loadData()
+		console.log("-------")
+  }
 	
 }
 </script>
