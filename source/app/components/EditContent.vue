@@ -50,7 +50,7 @@
 								.col-12.form-group(v-if="feedback")
 									p(v-html="feedback")
 								.col-12.form-group.form-action
-									button.btn.btn-primary(@click.prevent="saveData()") Save
+									button.btn.btn-primary(@click.prevent="updateData()") Save
 
 </template>
 
@@ -74,7 +74,8 @@ export default {
 		  row: null,
 		  dead: false,
 		  feedback: false,
-		  feedback_text: null
+			feedback_text: null,
+			app_update: false
 	  };
 	},
 	watch: {
@@ -103,11 +104,15 @@ export default {
 			app.row = person.row
 			if(person.dates.birth) {
 				app.b_day_p = dateTransform(person.dates.birth)
+			}else{
+				app.b_day_p = ""
 			}
 			// console.log("dead: " + person.dates.dead)
 			if(person.dates.dead){
 				app.d_day_p = dateTransform(person.dates.dead)
 				app.dead = true
+			}else{
+				app.dead = false
 			}
 			
 			function dateTransform(timestamp){
@@ -126,6 +131,72 @@ export default {
 				return time;
 			}
 			
+		},
+		updateData(){
+			let app = this
+			let personId = app.$route.params.id
+			let dbPersonas = app.$store.state.personas
+			console.log("update data");
+
+			if(!validacion()){
+				console.log("ya esta validado");
+				
+				if(app.father != dbPersonas[personId].conections.father){
+					app.row = dbPersonas[app.father].row +1
+				}
+				if(app.mother != dbPersonas[personId].conections.mother){
+					app.row = dbPersonas[app.mother].row +1
+				}
+				if (app.b_day_p) {
+					app.b_day = new Date(app.b_day_p)
+				}
+				if (app.d_day_p) {
+					app.d_day = new Date(app.d_day_p)
+				}
+
+				actualizarDatos()
+			}
+
+			function actualizarDatos(){
+				console.log("actualizando datos");
+				app.$store.state.db.collection("people").doc(personId).update({
+					name: app.name,
+					nickname: app.nk_name,
+					row: app.row,
+					sex: app.sex,
+					bio: app.bio,
+					img: app.image,
+					conections:{
+						father: app.father,
+						mother: app.mother,
+						spouse: app.spouse
+					},
+					dates:{
+						birth: app.b_day,
+						dead: app.d_day
+					}
+				})
+					.then(function(docRef) {
+						
+					})
+					.catch(function(error) {
+						console.error("Error adding document: ", error);
+					});
+			}
+
+			function validacion(){
+				let feedBack = ""
+				if(!app.name){
+					feedBack = "El nombre es un campo obligatorio<br>"
+				}
+				if(!app.nk_name){
+					feedBack = feedBack + "El apodo es un campo obligatorio<br>"
+				}
+				if(feedBack == ""){
+					feedBack = null
+				}
+				return feedBack
+			}
 		}
 	},
 	computed:{
@@ -140,12 +211,33 @@ export default {
 		}
 	},
 	created() {
-	},
-	updated() {
-		console.log("updated")
+		console.log("created")
 		this.loadData()
 		console.log("-------")
 	},
+	updated() {
+		let app = this
+		console.log("updated")
+		if (!app.app_update) {
+			
+			app.loadData()
+			app.app_update = true
+
+		}
+		console.log("-------")
+		
+	},
+	// beforeRouteEnter (to, from, next) {
+  //   // react to route changes...
+	// 	// don't forget to call next()
+	// 	console.log("beforeRouteEnter")
+	// 	next(vm => {
+	// 		// access to component instance via `vm`
+	// 		vm.loadData()
+	// 	})
+	// 	console.log("-------")
+		
+  // },
 	beforeRouteUpdate (to, from, next) {
     // react to route changes...
 		// don't forget to call next()

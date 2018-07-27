@@ -141,9 +141,6 @@ export default {
 				if(!app.sex){
 					feedBack = feedBack + "El sexo es un campo obligatorio<br>"
 				}
-				if(!app.sex){
-					feedBack = feedBack + "El sexo es un campo obligatorio<br>"
-				}
 				if(!app.father && !app.mother){
 					feedBack = feedBack + "Seleccione uno de los padres<br>"
 				}
