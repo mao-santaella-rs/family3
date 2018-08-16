@@ -138,6 +138,8 @@ export default {
 			let dbPersonas = app.$store.state.personas
 			console.log("update data");
 
+			app.feedback = validacion()
+
 			if(!validacion()){
 				console.log("ya esta validado");
 				
@@ -177,7 +179,7 @@ export default {
 					}
 				})
 					.then(function(docRef) {
-						
+						console.log("Se guardo Correctamente")
 					})
 					.catch(function(error) {
 						console.error("Error adding document: ", error);
@@ -217,14 +219,14 @@ export default {
 	},
 	updated() {
 		let app = this
-		console.log("updated")
 		if (!app.app_update) {
 			
+			console.log("updated")
 			app.loadData()
 			app.app_update = true
+			console.log("-------")
 
 		}
-		console.log("-------")
 		
 	},
 	// beforeRouteEnter (to, from, next) {

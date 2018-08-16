@@ -8,16 +8,17 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
 	state: {
 		db: db,
-		personas: {},
-		family: {},
-		femenine: {},
-		masculine: {},
+		personas: null,
+		family: null,
+		femenine: null,
+		masculine: null,
 		session: {
 			'login': null,
 			'alias': null,
 			'uid': null,
 			'email': null
-		}
+		},
+		lines: {}
 	},
 	mutations: {
 		storePersonasData: (state,val) => {
@@ -34,6 +35,9 @@ export const store = new Vuex.Store({
 		},
 		storeSexFemenineData: (state, val) => {
 			state.femenine = val
+		},
+		storeLinesData: (state, val) => {
+			state.lines = val
 		}
 	},
 	actions:{
@@ -53,7 +57,9 @@ export const store = new Vuex.Store({
 				context.commit('storePersonasData', dbObject)
 				context.commit('storeSexMasculineData', objectM)
 				context.commit('storeSexFemenineData', objectF)
+				// context.commit('storePersonasNumData', Object.keys(dbObject).length)
 				context.dispatch('orderData', dbObject)
+				context.dispatch('orderLinesData', dbObject)
 			})
 		},
 		orderData: (context,objectP) => {
@@ -66,10 +72,14 @@ export const store = new Vuex.Store({
 			};
 
 			const lowestRow = objectP[Object.keys(objectP)[0]].row;
-			// console.log(lowestRow);
+			// console.log('lowestRow: ' + lowestRow);
+			// const hiestRow = objectP[Object.keys(objectP)[Object.keys(objectP).length - 1]].row; 
+			// console.log('hiestRow: ' + hiestRow);
 
+			// loop en todos los elementos como llegan de firebase
 			for (let key in objectP) {
-				// console.log("***PERSONA MF: " + objectP[key].name);
+				
+
 				// si es = a lowest row
 				if (objectP[key].row == lowestRow) {
 					// console.log(objectP[key].name + " lowest ROW");
@@ -198,6 +208,29 @@ export const store = new Vuex.Store({
 				return agregarTreeObject(obj[parts[0]], parts.slice(1).join("."), key, familyId, relation);
 			}
 		},
+		orderLinesData: (context, objectP) => {
+			let objectL = {}
+			for (let key in objectP){
+				let personMom = objectP[key].conections.mother
+				let personDad = objectP[key].conections.father
+				// console.log(objectP[key].name)
+				
+				if (personMom && personDad){
+					// console.log("mom: " + personMom + " | dad: " + personDad)
+					objectL[key] = "a" + personMom + personDad
+				} else if (personMom) {
+					// console.log("mom: " + personMom)
+					objectL[key] = "a" + personMom
+				} else if (personDad){
+					// console.log("dad: " + personDad)
+					objectL[key] = "a" + personDad
+				} else {
+					objectL[key] = null
+				}				
+			}
+			// console.log(objectL)
+			context.commit('storeLinesData', objectL)
+		},
 		sessionV: context => {
 			firebase.auth().onAuthStateChanged( user => {
 				if (user) {
@@ -239,7 +272,6 @@ export const store = new Vuex.Store({
 		}
 	},
 	getters:{
-		
 	}
 
 })
