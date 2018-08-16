@@ -24,7 +24,6 @@ export default {
 	props: ["datos","personas"],
 	data() {
 	  return {
-			coordenadas: ""
 		};
 	},
 	watch: {},
@@ -113,7 +112,7 @@ export default {
 						// console.log($parentCords)
 
 						// create line between person and parent
-						createLine($svg, $parentCords.x - $lineCords.x + ($parentCords.width /2), $parentCords.bottom - $lineCords.y - 10, $personCords.x - $lineCords.x + ($personCords.width /2), $personCords.y - $lineCords.y + 10)
+						createPolyLine($svg, $parentCords.x - $lineCords.x + ($parentCords.width /2), $parentCords.bottom - $lineCords.y - 10, $personCords.x - $lineCords.x + ($personCords.width /2), $personCords.y - $lineCords.y + 10)
 						// console.log("--------------------");
 					}
 					
@@ -143,6 +142,20 @@ export default {
 				line.setAttribute("y1",cly1)
 				line.setAttribute("x2",clx2)
 				line.setAttribute("y2",cly2)
+				
+				clctnr.appendChild(line)
+			}
+
+			// CREAR POLYLINEA DENTRO DEL SVG
+			function createPolyLine(clctnr,clx1,cly1,clx2,cly2){
+				var NS = "http://www.w3.org/2000/svg"
+				var line = document.createElementNS(NS, "polyline")
+
+				var hWay =  cly2 - 35 
+
+				var cords = clx1 + "," + cly1 + " " + clx1 + "," + hWay + " " + clx2 + "," + hWay + " " + clx2 + "," + cly2
+
+				line.setAttribute("points",cords)
 				
 				clctnr.appendChild(line)
 			}
