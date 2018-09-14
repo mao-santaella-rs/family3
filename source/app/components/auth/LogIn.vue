@@ -30,7 +30,8 @@ export default {
 			if(app.user && app.password){
 				firebase.auth().signInWithEmailAndPassword(app.user, app.password)
 				.then(()=>{
-					app.$router.push({ path: '/' })
+					// app.$router.push({ path: '/' })
+					app.$router.go(-1)
 				})
 				.catch(function(error) {
 					// Handle Errors here.

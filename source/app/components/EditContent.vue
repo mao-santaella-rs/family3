@@ -76,6 +76,46 @@ export default {
 		// '$route': (to,from) => {
 		// 	this.loadData();
 		// }
+		b_day_p(){
+			var rawDate = this.people[this.$route.params.id].dates.birth.seconds
+			var dbDate = new Date()
+			dbDate.setSeconds(rawDate)
+
+			// console.log("dbTime = " + dateTransform(rawDate));
+			// console.log("db date= " + rawDate);
+			
+			// var date = new Date(this.b_day_p)
+			// var date = new Date(1987,4,20,0,0,1,0)
+			var date = new Date("1987-04-20T00:00:01.0Z")
+			// var date = new Date("20 Apr 1987 00:00:01 GMT")
+			
+			var dYear = date.getUTCFullYear()
+			var dMonth = date.getUTCMonth()
+			var dDay = date.getUTCDate()
+			var dHours = date.getUTCHours()
+			var dMinutes = date.getUTCMinutes()
+			var dSeconds = date.getUTCSeconds()
+
+			// console.log(date.toUTCString());
+			
+			// console.log("date = " + dYear + " " + dMonth + " "  + dDay + " "  + dHours + " "  + dMinutes + " "  + dSeconds + " " );
+			
+			function dateTransform(timestamp){
+				var a = new Date(0)
+				a.setUTCSeconds(timestamp)
+				var year = a.getUTCFullYear()
+				var month = a.getUTCMonth() + 1
+				if(month < 10){
+					month = "0" + month
+				}
+				var date = a.getUTCDate()
+				if(date < 10){
+					date = "0" + date
+				}
+				var time = year + '-' + month + '-' + date
+				return time				
+			}
+		}
 	},
 	methods: {
 		loadData(){
@@ -83,8 +123,6 @@ export default {
 			let people = app.people
 			let personId = app.$route.params.id
 			let person = people[personId]
-			console.log(personId)
-			console.log(person)
 
 			app.name = person.name
 			app.nk_name = person.nickname
@@ -96,11 +134,13 @@ export default {
 			
 			app.bio = person.bio
 			app.row = person.row
+
 			if(person.dates.birth) {
 				app.b_day_p = dateTransform(person.dates.birth)
 			}else{
 				app.b_day_p = ""
 			}
+			
 			// console.log("dead: " + person.dates.dead)
 			if(person.dates.dead){
 				app.d_day_p = dateTransform(person.dates.dead)
@@ -111,17 +151,17 @@ export default {
 			
 			function dateTransform(timestamp){
 				var a = new Date(0)
-				a.setSeconds(timestamp.seconds)
-				var year = a.getFullYear()
-				var month = a.getMonth() + 1
+				a.setUTCSeconds(timestamp.seconds)
+				var year = a.getUTCFullYear()
+				var month = a.getUTCMonth() + 1
 				if(month < 10){
 					month = "0" + month
 				}
-				var date = a.getDate()
+				var date = a.getUTCDate()
 				if(date < 10){
 					date = "0" + date
 				}
-				var time = year + '-' + month + '-' + date 
+				var time = year + '-' + month + '-' + date
 				return time;
 			}
 			
@@ -130,12 +170,12 @@ export default {
 			let app = this
 			let personId = app.$route.params.id
 			let dbPersonas = app.$store.state.personas
-			console.log("update data");
+			// console.log("update data");
 
 			app.feedback = validacion()
 
 			if(!validacion()){
-				console.log("ya esta validado");
+				// console.log("ya esta validado");
 				
 				if(app.father != dbPersonas[personId].conections.father){
 					app.row = dbPersonas[app.father].row +1
@@ -144,10 +184,10 @@ export default {
 					app.row = dbPersonas[app.mother].row +1
 				}
 				if (app.b_day_p) {
-					app.b_day = new Date(app.b_day_p)
+					app.b_day = new Date(app.b_day_p + "T00:00:01.0Z")
 				}
 				if (app.d_day_p) {
-					app.d_day = new Date(app.d_day_p)
+					app.d_day = new Date(app.d_day_p + "T00:00:01.0Z")
 				}
 
 				actualizarDatos()
@@ -155,6 +195,8 @@ export default {
 
 			function actualizarDatos(){
 				console.log("actualizando datos");
+				console.log(app.b_day);
+				
 				app.$store.state.db.collection("people").doc(personId).update({
 					name: app.name,
 					nickname: app.nk_name,
@@ -208,7 +250,10 @@ export default {
 	},
 	created() {
 		console.log("created")
-		this.loadData()
+		if (this.people) {
+			this.loadData()
+			this.app_update = true
+		}
 		console.log("-------")
 	},
 	updated() {

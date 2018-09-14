@@ -43,15 +43,14 @@ export default {
 			}else{
 				return null
 			}
-			
 		},
 		dateTransform(timestamp){
 			var a = new Date(0);
-			a.setSeconds(timestamp);
+			a.setUTCSeconds(timestamp);
 			var months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-			var year = a.getFullYear();
-			var month = months[a.getMonth()];
-			var date = a.getDate();
+			var year = a.getUTCFullYear();
+			var month = months[a.getUTCMonth()];
+			var date = a.getUTCDate();
 			var time = date + ' ' + month + ' ' + year ;
 			return time;
 		},
@@ -98,13 +97,13 @@ export default {
 					
 					// if $store.lines[key] has data
 					if(app.lines[key]){
-						console.log(app.personas[key].name)
+						// console.log(app.personas[key].name)
 						
 						const $lineCords = $line.getBoundingClientRect()
 						// person object and cords
 						const $person = document.querySelector("." + 'a' + key)
 						const $personCords = $person.getBoundingClientRect()
-						console.log($personCords)
+						// console.log($personCords)
 
 						// parent of person object and cords
 						const $parent = document.querySelector("." + app.lines[key])

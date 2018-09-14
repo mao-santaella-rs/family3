@@ -71,6 +71,14 @@ export default {
 		  feedback_text: null
 	  };
 	},
+	watch:{
+		b_day_p(){
+			var date = new Date(this.b_day_p + " 00:00:01")
+			console.log(this.b_day_p);
+			console.log(date);
+			
+		}
+	},
 	methods: {
 		saveData(){
 			let app = this
@@ -86,10 +94,10 @@ export default {
 					app.row = app.$store.state.personas[app.mother].row +1
 				}
 				if (app.b_day_p) {
-					app.b_day = new Date(app.b_day_p)
+					app.b_day = new Date(app.b_day_p + "T00:00:01.0Z")
 				}
 				if (app.d_day_p) {
-					app.d_day = new Date(app.d_day_p)
+					app.d_day = new Date(app.d_day_p + "T00:00:01.0Z")
 				}
 
 				enviarDatos()

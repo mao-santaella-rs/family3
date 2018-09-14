@@ -54,7 +54,9 @@ export default {
 									user_id: cred.user.uid
 								})
 							}).then(() => {
-								app.$router.push({path: '/'})
+								// app.$router.push({path: '/'})
+								
+								app.$router.go(-1)
 							})
 							.catch(err => {
 								console.log(err)
