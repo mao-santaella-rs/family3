@@ -8,7 +8,7 @@
 			.header__user__action(v-if="session.login")
 				a(href,@click.prevent="signOut()").lnk log Out
 			.header__user__action(v-if="!session.login")
-				router-link(to="/login").lnk log In
+				router-link(:to="{name: 'login'}").lnk log In
 </template>
 
 <script>

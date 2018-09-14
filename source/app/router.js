@@ -16,13 +16,14 @@ export default new Router({
 			name: 'modal',
 			component: Modal,
 			children: [
-				
 				{ 
 					path: 'login',
+					name: 'login',
 					component: LogIn
 				},
 				{
 					path: 'signup',
+					name: 'signup',
 					component: SignUp
 				},
 				{
@@ -35,7 +36,6 @@ export default new Router({
 					name: 'edit',
 					component: EditContent
 				}
-
 			]
 		},
 	]

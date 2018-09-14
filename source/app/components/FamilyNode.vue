@@ -6,7 +6,7 @@
 				.person(v-for='(person,index) in family.couple', :key='person+index', :class="'a' + person")
 					.person-item
 						.person-item__img(:style="{'background-image': 'url('+personas[person].img+')'}")
-							router-link.person-item__edit(:to="'/m/edit/' + person")
+							router-link.person-item__edit(:to="{name: 'edit' , params: { id: person }}")
 						.person-item__info
 							.person-item__info__name
 								span {{personas[person].name}}
