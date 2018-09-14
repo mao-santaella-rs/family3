@@ -1,56 +1,50 @@
 <template lang="pug">
-	#addcontent
-		.container
-			.row.justify-content-center
-				.col-9
-					.card
-						.card-header
-							h5.card-title Editar Familiar
-						.card-body
-							.row.form
-								.col-md-6.form-group
-									label(for='form-name') Name
-									input#form-name.form-control(type='text',v-model="name")
-									.form-check.form-check-inline
-										input#form-sex-m.form-check-input(type='radio', name='formsex', v-model="sex" ,value='m')
-										label.form-check-label(for='form-sex-m') Masculine
-									.form-check.form-check-inline
-										input#form-sex-f.form-check-input(type='radio', name='formsex', v-model="sex" ,value='f')
-										label.form-check-label(for='form-sex-f') Femenine
-								.col-md-6.form-group
-									label(for='form-nickname') Nick Name
-									input#form-nickname.form-control(type='text',v-model="nk_name")
-								.col-md-6.form-group
-									label(for='form-mother') Mother
-									select#form-mother.form-control(v-model="mother")
-										option(v-for="(person,key,index) in femenine", :key="key + index", :value="key") {{person.name}}
-								.col-md-6.form-group
-									label(for='form-father') Father
-									select#form-father.form-control(v-model="father")
-										option(v-for="(person,key,index) in masculine", :key="key + index", :value="key") {{person.name}}
-								.col-md-6.form-group
-									label(for='form-spouse') Spouse
-									select#form-spouse.form-control(v-model="spouse")
-										option(v-for="(person,key,index) in people", :key="index + key", :value="key") {{person.name}}
-								.col-md-6.form-group
-									label(for='form-img') Image Url
-									input#form-img.form-control(type='text',v-model="image")
-								.col-md-6.form-group
-									label(for='form-birth') Birth Day
-									input#form-birth.form-control(type='date',v-model="b_day_p")
-									.form-check.form-check-inline
-										input#form-dead-q.form-check-input(type='checkbox', value='true', v-model="dead")
-										label.form-check-label(for='form-dead-q') Deceased
-								.col-md-6.form-group(v-if="dead")
-									label(for='form-dead') Deceased Date
-									input#form-dead.form-control(type='date',v-model="d_day_p")
-								.col-md-6.form-group
-									label(for='form-bio') Bio
-									textarea#form-bio.form-control(rows='3',v-model="bio")
-								.col-12.form-group(v-if="feedback")
-									p(v-html="feedback")
-								.col-12.form-group.form-action
-									button.btn.btn-primary(@click.prevent="updateData()") Save
+#addcontent
+	h5.card-title Editar Familiar
+	.row.form
+		.col-md-6.form-group
+			label(for='form-name') Name
+			input#form-name.form-control(type='text',v-model="name")
+			.form-check.form-check-inline
+				input#form-sex-m.form-check-input(type='radio', name='formsex', v-model="sex" ,value='m')
+				label.form-check-label(for='form-sex-m') Masculine
+			.form-check.form-check-inline
+				input#form-sex-f.form-check-input(type='radio', name='formsex', v-model="sex" ,value='f')
+				label.form-check-label(for='form-sex-f') Femenine
+		.col-md-6.form-group
+			label(for='form-nickname') Nick Name
+			input#form-nickname.form-control(type='text',v-model="nk_name")
+		.col-md-6.form-group
+			label(for='form-mother') Mother
+			select#form-mother.form-control(v-model="mother")
+				option(v-for="(person,key,index) in femenine", :key="key + index", :value="key") {{person.name}}
+		.col-md-6.form-group
+			label(for='form-father') Father
+			select#form-father.form-control(v-model="father")
+				option(v-for="(person,key,index) in masculine", :key="key + index", :value="key") {{person.name}}
+		.col-md-6.form-group
+			label(for='form-spouse') Spouse
+			select#form-spouse.form-control(v-model="spouse")
+				option(v-for="(person,key,index) in people", :key="index + key", :value="key") {{person.name}}
+		.col-md-6.form-group
+			label(for='form-img') Image Url
+			input#form-img.form-control(type='text',v-model="image")
+		.col-md-6.form-group
+			label(for='form-birth') Birth Day
+			input#form-birth.form-control(type='date',v-model="b_day_p")
+			.form-check.form-check-inline
+				input#form-dead-q.form-check-input(type='checkbox', value='true', v-model="dead")
+				label.form-check-label(for='form-dead-q') Deceased
+		.col-md-6.form-group(v-if="dead")
+			label(for='form-dead') Deceased Date
+			input#form-dead.form-control(type='date',v-model="d_day_p")
+		.col-md-6.form-group
+			label(for='form-bio') Bio
+			textarea#form-bio.form-control(rows='3',v-model="bio")
+		.col-12.form-group(v-if="feedback")
+			p(v-html="feedback")
+		.col-12.form-group.form-action
+			button.btn.btn-primary(@click.prevent="updateData()") Save
 
 </template>
 
@@ -253,21 +247,6 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-.card-title
-	margin: 0
 
-.form-group
-	&:last-child
-		margin: 0
-
-.form-action
-	display: flex
-	justify-content: flex-end
-
-.container
-	margin-top: 50px
-
-.row
-	padding-top: 0
 </style>
 

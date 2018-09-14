@@ -1,22 +1,17 @@
 <template lang="pug">
-#signin.modal
-	a(@click.prevent="$router.go(-1)").modal__background
-	.modal__window.auth__window
-		a(@click.prevent="$router.go(-1)").modal__close
-			img(src="img/icons/cancel.svg")
-		.modal__content
-			h5.card-title Ingresar
-			.form
-				.form-group
-					label(for='form-user') User
-					input#form-user.form-control(type='text',v-model="user")
-				.form-group
-					label(for='form-password') Password
-					input#form-password.form-control(type='password',v-model="password")
-				.form-group(v-if="feedback_text")
-					p {{feedback_text}}
-				.form-group.form-action
-					button.btn.btn-primary(@click.prevent="login()") Ingresar
+#login
+	h5.card-title Ingresar
+	.form
+		.form-group
+			label(for='form-user') User
+			input#form-user.form-control(type='text',v-model="user")
+		.form-group
+			label(for='form-password') Password
+			input#form-password.form-control(type='password',v-model="password")
+		.form-group(v-if="feedback_text")
+			p {{feedback_text}}
+		.form-group.form-action
+			button.btn.btn-primary(@click.prevent="login()") Ingresar
 </template>
 
 <script>
