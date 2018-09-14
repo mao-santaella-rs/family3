@@ -1,26 +1,27 @@
 <template lang="pug">
-	#signup
-		.container
-			.row.justify-content-center
-				.col-6
-					.card
-						.card-header
-							h5.card-title Registro
-						.card-body
-							.form
-								.form-group
-									label(for='form-user') User
-									input#form-user.form-control(type='email',v-model="user")
-								.form-group
-									label(for='form-password') Password
-									input#form-password.form-control(type='password',v-model="password")
-								.form-group
-									label(for='form-alias') Alias
-									input#form-alias.form-control(type='text',v-model="alias")
-								.form-group(v-if="feedback_text")
-									p {{feedback_text}}
-								.form-group.form-action
-									button.btn.btn-primary(@click="signup") Registrar
+
+#signup.modal
+	a(@click.prevent="$router.go(-1)").modal__background
+	.modal__window.auth__window
+		a(@click.prevent="$router.go(-1)").modal__close
+			img(src="img/icons/cancel.svg")
+		.modal__content
+			h5.card-title Registro
+			.form
+				.form-group
+					label(for='form-user') User
+					input#form-user.form-control(type='email',v-model="user")
+				.form-group
+					label(for='form-password') Password
+					input#form-password.form-control(type='password',v-model="password")
+				.form-group
+					label(for='form-alias') Alias
+					input#form-alias.form-control(type='text',v-model="alias")
+				.form-group(v-if="feedback_text")
+					p {{feedback_text}}
+				.form-group.form-action
+					button.btn.btn-primary(@click="signup") Registrar
+
 </template>
 
 <script>
