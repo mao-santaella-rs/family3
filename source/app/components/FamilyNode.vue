@@ -69,6 +69,17 @@ export default {
 
 			// esto es porque el ultimo componente en terminar es el primero
 			if(currentRow == lowestRow){
+
+				// SCROLLING LEFT START
+				const fmly_wrapper = document.querySelector("#app")
+				let fmly_wrapper_bcr = fmly_wrapper.getBoundingClientRect()
+
+				const $fmly_row = document.querySelector('.fmly-row')
+				let $family_row_bcr = $fmly_row.getBoundingClientRect()
+				
+				fmly_wrapper.scrollLeft += ($family_row_bcr.width / 2) - (fmly_wrapper_bcr.width / 2)
+				// SCROLLING LEFT END
+
 				// old line
 				let $oldLine = document.getElementById(svg_id)
 
@@ -89,8 +100,6 @@ export default {
 				// creacion de svg
 				let $svg = fnCreateSvg($line,svg_id,svg_width,svg_height)
 
-				const $couple = document.querySelector('.fmly-row')
-				// console.log($couple)
 
 				// loop in $store.lines
 				for (let key in app.lines){

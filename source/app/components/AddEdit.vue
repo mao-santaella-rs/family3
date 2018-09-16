@@ -1,56 +1,59 @@
 <template lang="pug">
-#addcontent
-	h5.card-title Editar Familiar
-	.row.form
-		.col-md-6.form-group
+#addedit
+	h5.card-title(v-if="$route.name == 'edit'") Edit Relative
+	h5.card-title(v-else) Add Relative
+	.row
+		.col-md-6
 			label(for='form-name') Name
-			input#form-name.form-control(type='text',v-model="name")
+			input#form-name(type='text',v-model="name")
 			.form-check.form-check-inline
 				input#form-sex-m.form-check-input(type='radio', name='formsex', v-model="sex" ,value='m')
 				label.form-check-label(for='form-sex-m') Masculine
 			.form-check.form-check-inline
 				input#form-sex-f.form-check-input(type='radio', name='formsex', v-model="sex" ,value='f')
 				label.form-check-label(for='form-sex-f') Femenine
-		.col-md-6.form-group
+		.col-md-6
 			label(for='form-nickname') Nick Name
-			input#form-nickname.form-control(type='text',v-model="nk_name")
-		.col-md-6.form-group
+			input#form-nickname(type='text',v-model="nk_name")
+		.col-md-6
 			label(for='form-mother') Mother
-			select#form-mother.form-control(v-model="mother")
+			select#form-mother(v-model="mother")
 				option(v-for="(person,key,index) in femenine", :key="key + index", :value="key") {{person.name}}
-		.col-md-6.form-group
+		.col-md-6
 			label(for='form-father') Father
-			select#form-father.form-control(v-model="father")
+			select#form-father(v-model="father")
 				option(v-for="(person,key,index) in masculine", :key="key + index", :value="key") {{person.name}}
-		.col-md-6.form-group
+		.col-md-6
 			label(for='form-spouse') Spouse
-			select#form-spouse.form-control(v-model="spouse")
+			select#form-spouse(v-model="spouse")
 				option(v-for="(person,key,index) in people", :key="index + key", :value="key") {{person.name}}
-		.col-md-6.form-group
+		.col-md-6
 			label(for='form-img') Image Url
-			input#form-img.form-control(type='text',v-model="image")
-		.col-md-6.form-group
+			input#form-img(type='text',v-model="image")
+		.col-md-6
 			label(for='form-birth') Birth Day
-			input#form-birth.form-control(type='date',v-model="b_day_p")
+			input#form-birth(type='date',v-model="b_day_p",placeholder="yyyy-mm-dd")
 			.form-check.form-check-inline
 				input#form-dead-q.form-check-input(type='checkbox', value='true', v-model="dead")
 				label.form-check-label(for='form-dead-q') Deceased
-		.col-md-6.form-group(v-if="dead")
+		.col-md-6(v-if="dead")
 			label(for='form-dead') Deceased Date
-			input#form-dead.form-control(type='date',v-model="d_day_p")
-		.col-md-6.form-group
+			input#form-dead(type='date',v-model="d_day_p",placeholder="yyyy-mm-dd")
+		.col-md-6
 			label(for='form-bio') Bio
-			textarea#form-bio.form-control(rows='3',v-model="bio")
-		.col-12.form-group(v-if="feedback")
+			textarea#form-bio(rows='3',v-model="bio")
+		.col-12(v-if="feedback")
 			p(v-html="feedback")
-		.col-12.form-group.form-action
-			button.btn.btn-primary(@click.prevent="updateData()") Save
+		.col-12.form-action
+			button(v-if="$route.name == 'edit'", @click.prevent="updateData()") Update
+			button(v-else, @click.prevent="addData()") Add
+			a(@click.prevent="deleteData()",href, v-if="$route.name == 'edit'", title="Delete").lnk.lnk-delete Delete
 
 </template>
 
 <script>
 export default {
-	name: "editContent",
+	name: "AddEdit",
 	data() {
 	  return {
 		  name: null,
@@ -73,51 +76,36 @@ export default {
 	  };
 	},
 	watch: {
-		// '$route': (to,from) => {
-		// 	this.loadData();
-		// }
-		b_day_p(){
-			var rawDate = this.people[this.$route.params.id].dates.birth.seconds
-			var dbDate = new Date()
-			dbDate.setSeconds(rawDate)
-
-			// console.log("dbTime = " + dateTransform(rawDate));
-			// console.log("db date= " + rawDate);
-			
-			// var date = new Date(this.b_day_p)
-			// var date = new Date(1987,4,20,0,0,1,0)
-			var date = new Date("1987-04-20T00:00:01.0Z")
-			// var date = new Date("20 Apr 1987 00:00:01 GMT")
-			
-			var dYear = date.getUTCFullYear()
-			var dMonth = date.getUTCMonth()
-			var dDay = date.getUTCDate()
-			var dHours = date.getUTCHours()
-			var dMinutes = date.getUTCMinutes()
-			var dSeconds = date.getUTCSeconds()
-
-			// console.log(date.toUTCString());
-			
-			// console.log("date = " + dYear + " " + dMonth + " "  + dDay + " "  + dHours + " "  + dMinutes + " "  + dSeconds + " " );
-			
-			function dateTransform(timestamp){
-				var a = new Date(0)
-				a.setUTCSeconds(timestamp)
-				var year = a.getUTCFullYear()
-				var month = a.getUTCMonth() + 1
-				if(month < 10){
-					month = "0" + month
-				}
-				var date = a.getUTCDate()
-				if(date < 10){
-					date = "0" + date
-				}
-				var time = year + '-' + month + '-' + date
-				return time				
-			}
-		}
 	},
 	methods: {
+		stateValidation(){
+			let app = this
+			console.log(app.$route.name);
+			// if the computed property people is ready
+			if (app.people) {
+				// check if is already updated
+				if(!app.app_update){					
+					// If the route.name is edit and If there is an id in the route params
+					if (app.$route.name == 'edit' && app.$route.params.id) {
+						app.loadData()
+					}
+					app.app_update = true
+				}
+			}
+		},
+		genderSel(gender){
+			let app = this
+			let people = app.people
+			let objP = {}
+			for(var key in people) {
+				if(people.hasOwnProperty(key)) {
+					if (people[key].sex == gender) {
+						objP[key] = app.people[key]
+					}
+				}
+			}
+			return objP
+		},
 		loadData(){
 			let app = this
 			let people = app.people
@@ -169,7 +157,7 @@ export default {
 		updateData(){
 			let app = this
 			let personId = app.$route.params.id
-			let dbPersonas = app.$store.state.personas
+			let dbPersonas = app.people
 			// console.log("update data");
 
 			app.feedback = validacion()
@@ -197,7 +185,7 @@ export default {
 				console.log("actualizando datos");
 				console.log(app.b_day);
 				
-				app.$store.state.db.collection("people").doc(personId).update({
+				app.dataBase.collection("people").doc(personId).update({
 					name: app.name,
 					nickname: app.nk_name,
 					row: app.row,
@@ -216,6 +204,7 @@ export default {
 				})
 					.then(function(docRef) {
 						console.log("Se guardo Correctamente")
+						app.$router.go(-1)
 					})
 					.catch(function(error) {
 						console.error("Error adding document: ", error);
@@ -235,63 +224,137 @@ export default {
 				}
 				return feedBack
 			}
+		},
+		deleteData(){
+			let app = this
+			let personId = app.$route.params.id
+			let dbPersonas = app.people
+			var confirmation = confirm("Do you want to delete" + dbPersonas[personId].name);
+			if (confirmation) {
+				app.dataBase.collection("people").doc(personId).delete()
+					.then( () => {
+						console.log("Document successfully deleted!");
+						app.$store.dispatch('getData')
+						app.$router.go(-1)
+					}).catch( error => {
+						console.error("Error removing document: ", error);
+					});
+			} else {
+				txt = "You pressed Cancel!";
+			}
+		},
+		addData(){
+			let app = this
+			app.feedback = null
+			
+			app.feedback = validacion()
+
+			if(!validacion()){
+				if(app.father){
+					app.row = app.$store.state.personas[app.father].row +1
+				}
+				if(app.mother){
+					app.row = app.$store.state.personas[app.mother].row +1
+				}
+				if (app.b_day_p) {
+					app.b_day = new Date(app.b_day_p + "T00:00:01.0Z")
+				}
+				if (app.d_day_p) {
+					app.d_day = new Date(app.d_day_p + "T00:00:01.0Z")
+				}
+
+				enviarDatos()
+			}
+			
+
+			// functions
+
+			function enviarDatos(){
+				app.dataBase.collection("people").add({
+					name: app.name,
+					nickname: app.nk_name,
+					row: app.row,
+					sex: app.sex,
+					bio: app.bio,
+					img: app.image,
+					conections:{
+						father: app.father,
+						mother: app.mother,
+						spouse: app.spouse
+					},
+					dates:{
+						birth: app.b_day,
+						dead: app.d_day
+					}
+				})
+					.then(function(docRef) {
+						console.log("Document written with ID: ", docRef.id)
+						app.$router.go(-1)
+					})
+					.catch(function(error) {
+						console.error("Error adding document: ", error)
+					});
+			}
+
+			function validacion(){
+				let feedBack = ""
+				if(!app.name){
+					feedBack = "El nombre es un campo obligatorio<br>"
+				}
+				if(!app.nk_name){
+					feedBack = feedBack + "El apodo es un campo obligatorio<br>"
+				}
+				if(!app.sex){
+					feedBack = feedBack + "El sexo es un campo obligatorio<br>"
+				}
+				if(!app.father && !app.mother){
+					feedBack = feedBack + "Seleccione uno de los padres<br>"
+				}
+				if(feedBack == ""){
+					feedBack = null
+				}
+				return feedBack
+			}
 		}
 	},
 	computed:{
-		masculine(){
-			return this.$store.state.masculine
-		},
-		femenine(){
-			return this.$store.state.femenine
-		},
+
 		people(){
 			return this.$store.state.personas
+		},
+		masculine(){
+			return this.genderSel("m")
+		},
+		femenine(){
+			return this.genderSel("f")
+		},
+		dataBase(){
+			return this.$store.state.db
 		}
 	},
 	created() {
 		console.log("created")
-		if (this.people) {
-			this.loadData()
-			this.app_update = true
-		}
+		this.stateValidation()
 		console.log("-------")
 	},
 	updated() {
-		let app = this
-		if (!app.app_update) {
-			
-			console.log("updated")
-			app.loadData()
-			app.app_update = true
-			console.log("-------")
-
-		}
-		
+		console.log("updated")
+		this.stateValidation()
+		console.log("-------")
 	},
-	// beforeRouteEnter (to, from, next) {
-  //   // react to route changes...
-	// 	// don't forget to call next()
-	// 	console.log("beforeRouteEnter")
-	// 	next(vm => {
-	// 		// access to component instance via `vm`
-	// 		vm.loadData()
-	// 	})
-	// 	console.log("-------")
-		
-  // },
 	beforeRouteUpdate (to, from, next) {
     // react to route changes...
 		// don't forget to call next()
 		next()
 		console.log("beforeRouteUpdate")
-		this.loadData()
+		this.stateValidation()
 		console.log("-------")
   }
 	
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 
 </style>
 

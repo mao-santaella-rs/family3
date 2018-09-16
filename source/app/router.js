@@ -2,18 +2,17 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import LogIn from './components/auth/LogIn.vue'
 import SignUp from './components/auth/SignUp.vue'
-import AddContent from './components/AddContent.vue'
-import EditContent from './components/EditContent.vue'
 import Modal from './components/Modal.vue'
+import AddEdit from './components/AddEdit.vue'
 
 
 Vue.use(Router)
-
+	
 export default new Router({
 	routes: [
 		{
 			path: '/m',
-			name: 'modal',
+			
 			component: Modal,
 			children: [
 				{ 
@@ -29,12 +28,12 @@ export default new Router({
 				{
 					path: 'add',
 					name: 'add',
-					component: AddContent
+					component: AddEdit
 				},
 				{
 					path: 'edit/:id',
 					name: 'edit',
-					component: EditContent
+					component: AddEdit
 				}
 			]
 		},

@@ -10,8 +10,6 @@ export const store = new Vuex.Store({
 		db: db,
 		personas: null,
 		family: null,
-		femenine: null,
-		masculine: null,
 		session: {
 			'login': null,
 			'alias': null,
@@ -30,12 +28,6 @@ export const store = new Vuex.Store({
 		storeSessionData: (state, val) => {
 			state.session = val
 		},
-		storeSexMasculineData: (state, val) => {
-			state.masculine = val
-		},
-		storeSexFemenineData: (state, val) => {
-			state.femenine = val
-		},
 		storeLinesData: (state, val) => {
 			state.lines = val
 		}
@@ -43,20 +35,11 @@ export const store = new Vuex.Store({
 	actions:{
 		getData: context => {
 			let dbObject = {};
-			let objectM = {};
-			let objectF = {};
 			context.state.db.collection('people').orderBy("row").onSnapshot(snapshot => {
-				snapshot.forEach(doc => {
-					dbObject[doc.id] = doc.data()
-					if (doc.data().sex == "m"){
-						objectM[doc.id] = doc.data()
-					} else {
-						objectF[doc.id] = doc.data()
-					}
+				snapshot.docChanges().forEach(change => {
+					dbObject[change.doc.id] = change.doc.data()
 				})
 				context.commit('storePersonasData', dbObject)
-				context.commit('storeSexMasculineData', objectM)
-				context.commit('storeSexFemenineData', objectF)
 				// context.commit('storePersonasNumData', Object.keys(dbObject).length)
 				context.dispatch('orderData', dbObject)
 				context.dispatch('orderLinesData', dbObject)
@@ -272,6 +255,7 @@ export const store = new Vuex.Store({
 		}
 	},
 	getters:{
+		
 	}
 
 })

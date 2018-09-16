@@ -1,5 +1,6 @@
 node_modules/
 public/
+design/
 functions/node_modules
 
 .sass-cache/
