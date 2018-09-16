@@ -1,24 +1,24 @@
-var gulp				= require('gulp'),
-	plumber				= require('gulp-plumber'),
-	browserSync			= require('browser-sync').create(),
-	notify				= require('gulp-notify'),
-	pug					= require('gulp-pug'),
-	inlineCss 			= require('gulp-inline-css'),
-	changed				= require('gulp-changed'),
-	prettify			= require('gulp-prettify'),
-	sass				= require('gulp-sass'),
-	sourcemaps			= require('gulp-sourcemaps'),
-	stripCssComments	= require('gulp-strip-css-comments'),
-	autoprefixer		= require('gulp-autoprefixer'),
-	csso				= require('gulp-csso'),
-	cssnano				= require('gulp-cssnano'),
-	cssbeautify			= require('gulp-cssbeautify'),
-	cachebust			= require('gulp-cache-bust'),
-	concat				= require('gulp-concat'),
-	babel				= require('gulp-babel'),
-	uglify				= require('gulp-uglify'),
-	imagemin			= require('gulp-imagemin'),
-	browserify			= require('gulp-browserify');
+var	gulp							= require('gulp'),
+		plumber						= require('gulp-plumber'),
+		browserSync				= require('browser-sync').create(),
+		notify						= require('gulp-notify'),
+		pug								= require('gulp-pug'),
+		inlineCss 				= require('gulp-inline-css'),
+		changed						= require('gulp-changed'),
+		prettify					= require('gulp-prettify'),
+		sass							= require('gulp-sass'),
+		sourcemaps				= require('gulp-sourcemaps'),
+		stripCssComments	= require('gulp-strip-css-comments'),
+		autoprefixer			= require('gulp-autoprefixer'),
+		csso							= require('gulp-csso'),
+		cssnano						= require('gulp-cssnano'),
+		cssbeautify				= require('gulp-cssbeautify'),
+		cachebust					= require('gulp-cache-bust'),
+		concat						= require('gulp-concat'),
+		babel							= require('gulp-babel'),
+		uglify						= require('gulp-uglify'),
+		imagemin					= require('gulp-imagemin'),
+		webpack 					= require('webpack-stream')
 
 var src = './source', // -> Desarrollo
 	pub = './public'; // -> Producción
@@ -45,14 +45,19 @@ var carpeta = {
 	},
 
 	vue: {
-		file	: src + '/app/main.js',
+		file	: src + '/app/app.js',
 		src		: src + '/app/**/*.js',
 		inc		: src + '/app/**/*.vue',
-		pub		: pub + '/js/app'
+		pub		: pub + '/js'
+	},
+
+	json: {
+		src		: src + '/json/*.json',
+		pub		: pub + '/json'
 	},
 
 	img: {
-		all		: src + '/img/**/*.{jpg,jpeg,png,gif,svg,JPG,JPEG}',
+		src		: src + '/img/**/*.{jpg,jpeg,png,gif,svg,JPG,JPEG}',
 		pub		: pub + '/img'
 	}
 };
@@ -60,16 +65,12 @@ var carpeta = {
 
 // TASKS ------------------------------------------------------------------
 
-//COMPILAR VUE
+// COMPILAR VUE WEBPACK
 gulp.task('vue', done => {
 	gulp.src(carpeta.vue.file)
 		.pipe(plumber())
 
-		.pipe(browserify({
-			transform: ['vueify', 'babelify', 'aliasify'] }))
-
-		// COMPRIME EL JAVASCRIPT
-		.pipe(uglify())
+		.pipe(webpack(require('./webpack.config.js')))
 		
 		.pipe(gulp.dest(carpeta.vue.pub))
 		
@@ -356,6 +357,15 @@ gulp.task('img', done => {
 	done()
 });
 
+// COPIA DE ARCHIVO JSON
+gulp.task('json', done => {
+	gulp.src(carpeta.json.src)
+		
+		.pipe(gulp.dest(carpeta.json.pub));
+
+	done()
+});
+
 
 // MONTAJE DEL SERVIDOR
 gulp.task('servidor', done => {
@@ -388,10 +398,13 @@ gulp.task('watch', done => {
 	// Vigila los cambios en los archivos .js de los includes
 	// gulp.watch(carpeta.js.inc , gulp.series('concat'));
 
-	// VIGILA LOS ARCHIVOS DE VUE DENTRO DE _includes/app
+	// VIGILA LOS ARCHIVOS .VUE DENTRO DE app
 	gulp.watch(carpeta.vue.inc , gulp.series('vue'));
-	// VIGILA LOS ARCHIVOS SASS DENTRO DE css para compilar main.sass
-	gulp.watch(carpeta.vue.src , gulp.series('vue'));
+	// VIGILA LOS ARCHIVOS JS DENTRO DE app
+	gulp.watch(carpeta.vue.src, gulp.series('vue'));
+
+	// VIGILA LOS ARCHIVOS JSON
+	gulp.watch(carpeta.json.src, gulp.series('json'));
 
 	done()
 });
