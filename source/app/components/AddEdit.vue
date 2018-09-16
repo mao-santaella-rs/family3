@@ -80,7 +80,6 @@ export default {
 	methods: {
 		stateValidation(){
 			let app = this
-			console.log(app.$route.name);
 			// if the computed property people is ready
 			if (app.people) {
 				// check if is already updated
@@ -89,6 +88,7 @@ export default {
 					if (app.$route.name == 'edit' && app.$route.params.id) {
 						app.loadData()
 					}
+					// prevent re-update
 					app.app_update = true
 				}
 			}
@@ -109,8 +109,8 @@ export default {
 		loadData(){
 			let app = this
 			let people = app.people
-			let personId = app.$route.params.id
-			let person = people[personId]
+			let routeId = app.$route.params.id
+			let person = people[routeId]
 
 			app.name = person.name
 			app.nk_name = person.nickname
@@ -156,7 +156,7 @@ export default {
 		},
 		updateData(){
 			let app = this
-			let personId = app.$route.params.id
+			let routeId = app.$route.params.id
 			let dbPersonas = app.people
 			// console.log("update data");
 
@@ -165,10 +165,10 @@ export default {
 			if(!validacion()){
 				// console.log("ya esta validado");
 				
-				if(app.father != dbPersonas[personId].conections.father){
+				if(app.father != dbPersonas[routeId].conections.father){
 					app.row = dbPersonas[app.father].row +1
 				}
-				if(app.mother != dbPersonas[personId].conections.mother){
+				if(app.mother != dbPersonas[routeId].conections.mother){
 					app.row = dbPersonas[app.mother].row +1
 				}
 				if (app.b_day_p) {
@@ -183,9 +183,8 @@ export default {
 
 			function actualizarDatos(){
 				console.log("actualizando datos");
-				console.log(app.b_day);
-				
-				app.dataBase.collection("people").doc(personId).update({
+
+				app.dataBase.doc(routeId).update({
 					name: app.name,
 					nickname: app.nk_name,
 					row: app.row,
@@ -227,11 +226,12 @@ export default {
 		},
 		deleteData(){
 			let app = this
-			let personId = app.$route.params.id
+			let routeId = app.$route.params.id
 			let dbPersonas = app.people
-			var confirmation = confirm("Do you want to delete" + dbPersonas[personId].name);
+			// confirm troug confirm dialog
+			var confirmation = confirm("Do you want to delete" + dbPersonas[routeId].name);
 			if (confirmation) {
-				app.dataBase.collection("people").doc(personId).delete()
+				app.dataBase.doc(routeId).delete()
 					.then( () => {
 						console.log("Document successfully deleted!");
 						app.$store.dispatch('getData')
@@ -240,7 +240,7 @@ export default {
 						console.error("Error removing document: ", error);
 					});
 			} else {
-				txt = "You pressed Cancel!";
+				app.feedBack = "You pressed Cancel!";
 			}
 		},
 		addData(){
@@ -249,13 +249,16 @@ export default {
 			
 			app.feedback = validacion()
 
+			// if validation pass
 			if(!validacion()){
+				// asign de correct row
 				if(app.father){
 					app.row = app.$store.state.personas[app.father].row +1
 				}
 				if(app.mother){
 					app.row = app.$store.state.personas[app.mother].row +1
 				}
+				// format de the timestamp for firestore
 				if (app.b_day_p) {
 					app.b_day = new Date(app.b_day_p + "T00:00:01.0Z")
 				}
@@ -263,14 +266,15 @@ export default {
 					app.d_day = new Date(app.d_day_p + "T00:00:01.0Z")
 				}
 
+				// send data
 				enviarDatos()
 			}
 			
 
 			// functions
-
+			// fn send data
 			function enviarDatos(){
-				app.dataBase.collection("people").add({
+				app.dataBase.add({
 					name: app.name,
 					nickname: app.nk_name,
 					row: app.row,
@@ -295,7 +299,7 @@ export default {
 						console.error("Error adding document: ", error)
 					});
 			}
-
+			// fn validation
 			function validacion(){
 				let feedBack = ""
 				if(!app.name){
@@ -329,7 +333,7 @@ export default {
 			return this.genderSel("f")
 		},
 		dataBase(){
-			return this.$store.state.db
+			return this.$store.state.db.collection("people")
 		}
 	},
 	created() {
@@ -341,6 +345,22 @@ export default {
 		console.log("updated")
 		this.stateValidation()
 		console.log("-------")
+	},	
+  beforeRouteEnter (to, from, next) {
+    // called before the route that renders this component is confirmed.
+    // does NOT have access to `this` component instance,
+		// because it has not been created yet when this guard is called!
+		next(vm => {
+			// access to component instance via `vm`
+			console.log(vm.$store.state.session.login);
+			
+			if (vm.$store.state.session.login) {
+				next()
+			} else {
+				next("/m/login")
+			}
+		})
+		
 	},
 	beforeRouteUpdate (to, from, next) {
     // react to route changes...

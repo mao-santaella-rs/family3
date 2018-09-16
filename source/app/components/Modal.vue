@@ -1,8 +1,11 @@
 <template lang="pug">
 #modal.modal
-	a(@click.prevent="$router.go(-1)").modal__background
+	router-link(to="/").modal__background
+	//- a(@click.prevent="$router.go(-1)").modal__background
 	.modal__window
-		a(@click.prevent="$router.go(-1)").modal__close
+		router-link(to="/").modal__close
+			img(src="img/icons/cancel.svg")
+		//- a(@click.prevent="$router.go(-1)").modal__close
 			img(src="img/icons/cancel.svg")
 		.modal__content
 			router-view
