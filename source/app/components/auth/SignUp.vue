@@ -46,7 +46,7 @@ export default {
 						app.feedback_text = "el usuario ya existe";
 					} else {
 						// app.feedback_text = "el usuario esta disponible";
-						firebase.auth().createUserWithEmailAndPassword(app.user,app.password)
+						app.auth.createUserWithEmailAndPassword(app.user,app.password)
 							.then(cred => {
 								console.log(cred.user)
 								ref.set({
@@ -78,6 +78,12 @@ export default {
 					.replace(/^-+/, '')         // Trim - from start of text
 					.replace(/-+$/, '');        // Trim - from end of text
 			}
+		}
+	},
+	computed:{
+
+		auth(){
+			return this.$store.state.auth
 		}
 	}
 	

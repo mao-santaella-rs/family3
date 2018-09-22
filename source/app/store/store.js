@@ -1,13 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import db from "../firebase/init";
+import { fbFirestore, fbStorage, fbAuthentication } from "../firebase/init";
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
 	state: {
-		db: db,
+		db: fbFirestore,
+		storage: fbStorage,
+		auth: fbAuthentication,
 		personas: null,
 		family: null,
 		session: {
@@ -215,7 +217,7 @@ export const store = new Vuex.Store({
 			context.commit('storeLinesData', objectL)
 		},
 		sessionV: context => {
-			firebase.auth().onAuthStateChanged( user => {
+			context.state.auth.onAuthStateChanged( user => {
 				if (user) {
 					// User is signed in.
 					// console.log(user)

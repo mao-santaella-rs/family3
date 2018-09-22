@@ -49,6 +49,9 @@
 			button(v-else, @click.prevent="addData()") Add
 			a(@click.prevent="deleteData()",href, v-if="$route.name == 'edit'", title="Delete").lnk.lnk-delete Delete
 
+		.col-12
+			input(type="file",@change="processFile($event)")
+
 </template>
 
 <script>
@@ -78,6 +81,59 @@ export default {
 	watch: {
 	},
 	methods: {
+		processFile(event){
+			console.log(event.target.files[0]);
+
+			let app = this
+			
+			let file = event.target.files[0]
+
+			let storageRef = app.firebase.storage().ref()
+
+			var imageRef = storageRef.child('photos/' + file.name);
+
+			let task = imageRef.put(file)
+
+			task.on('state_changed',
+				snapshot =>{
+					var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+					
+					console.log('Upload is ' + progress + '% done');
+				}, 
+				error => {
+					switch (error.code) {
+
+						// User doesn't have permission to access the object
+						case 'storage/unauthorized': break
+
+						// User canceled the upload
+						case 'storage/canceled': break
+
+						// Unknown error occurred, inspect error.serverResponse
+						case 'storage/unknown': break
+				
+					}
+				},
+				() => {
+					// Upload completed successfully, now we can get the download URL
+					task.snapshot.ref.getDownloadURL()
+						.then( downloadURL => {
+							console.log('File available at', downloadURL);
+						})
+				})
+
+
+
+
+
+
+
+
+
+
+
+			
+		},
 		stateValidation(){
 			let app = this
 			// if the computed property people is ready
@@ -334,6 +390,9 @@ export default {
 		},
 		dataBase(){
 			return this.$store.state.db.collection("people")
+		},
+		firebase(){
+			return this.$store.state.storage
 		}
 	},
 	created() {

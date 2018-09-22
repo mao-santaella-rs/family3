@@ -18,7 +18,7 @@
     "bourbon": "^5.1.0",
     "browser-sync": "^2.24.7",
     "css-loader": "^1.0.0",
-    "firebase": "^5.4.2",
+    "firebase": "^5.5.1",
     "gulp": "^4.0.0",
     "gulp-autoprefixer": "^6.0.0",
     "gulp-babel": "^8.0.0",
@@ -52,8 +52,8 @@
     "webpack": "^4.17.1",
     "webpack-cli": "^3.1.0",
     "webpack-stream": "^5.1.1"
-	},
-	"browser": {
-		"vue": "vue/dist/vue.common.js"
-	}
+  },
+  "browser": {
+    "vue": "vue/dist/vue.common.js"
+  }
 }

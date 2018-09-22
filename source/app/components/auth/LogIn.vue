@@ -28,7 +28,7 @@ export default {
 		login(){
 			let app = this;
 			if(app.user && app.password){
-				firebase.auth().signInWithEmailAndPassword(app.user, app.password)
+				app.auth.signInWithEmailAndPassword(app.user, app.password)
 				.then(()=>{
 					// app.$router.push({ path: '/' })
 					app.$router.go(-1)
@@ -44,6 +44,12 @@ export default {
 					
 				}
 			}
+		}
+	},
+	computed:{
+
+		auth(){
+			return this.$store.state.auth
 		}
 	}
 	
