@@ -1,5 +1,5 @@
 <template lang="pug">
-	.fmly-wrpr(ref="fmly-wrpr")
+	.fmly-wrpr
 		#line.line
 		vfamilynode(v-if="datos",:datos='datos',:personas="personas")
 </template>

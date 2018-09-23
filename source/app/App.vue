@@ -2,8 +2,10 @@
 
 	#app
 		vHeader
-		router-view
-		vFamilyTree
+		router-view(v-if="people")
+		vFamilyTree(:style="{ transform: 'scale( 0.'+ zoom +')'}")
+		.zoom
+			input(type="range", min="100", max="999", value="999", v-model="zoom")
 
 
 </template>
@@ -18,6 +20,12 @@ export default {
 	},
 	data(){
 		return{
+			zoom: 999
+		}
+	},
+	computed:{
+		people(){
+			return this.$store.state.personas
 		}
 	},
 	created() {

@@ -17,12 +17,11 @@ const firebaseApp = firebase.initializeApp(config);
 firebaseApp.firestore().settings({timestampsInSnapshots:true});
 // firebaseApp.firestore().enablePersistence();
 
-const fbStorage = firebaseApp
 const fbFirestore = firebaseApp.firestore()
 const fbAuthentication = firebaseApp.auth()
 
 export {
+	firebaseApp,
 	fbFirestore,
-	fbStorage,
 	fbAuthentication
 };

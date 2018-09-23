@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import { fbFirestore, fbStorage, fbAuthentication } from "../firebase/init";
+import { firebaseApp, fbFirestore, fbAuthentication } from "../firebase/init";
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
 	state: {
+		firebase: firebaseApp,
 		db: fbFirestore,
-		storage: fbStorage,
 		auth: fbAuthentication,
 		personas: null,
 		family: null,
