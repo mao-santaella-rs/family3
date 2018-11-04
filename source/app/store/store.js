@@ -18,7 +18,8 @@ export const store = new Vuex.Store({
 			'uid': null,
 			'email': null
 		},
-		lines: {}
+		lines: {},
+		panZoom: true
 	},
 	mutations: {
 		storePersonasData: (state,val) => {
@@ -32,6 +33,9 @@ export const store = new Vuex.Store({
 		},
 		storeLinesData: (state, val) => {
 			state.lines = val
+		},
+		storePanZoom: (state,val) => {
+			state.panZoom = val
 		}
 	},
 	actions:{
@@ -254,6 +258,9 @@ export const store = new Vuex.Store({
 					context.commit('storeSessionData', userObjectP)
 				}
 			});
+		},
+		panZoomChange: (context, val) => {
+			context.commit('storePanZoom',val)
 		}
 	},
 	getters:{

@@ -13,7 +13,7 @@
 
 <script>
 export default {
-	name: 'vHeader',
+	name: 'Header',
 	data(){
 		return {
 			

@@ -84,8 +84,12 @@
 					p(v-if="selected_img").file-return <b>Selected file:</b><br>{{selected_img}}
 					button(v-if="saveImgButton()", @click.prevent="processFile()") Save Image
 
+			
+
 				.new-image(:style="{'background-image': 'url(' + image +')'}")
 
+			//- .mao
+			//- 	a(:href="image", title="title").class img
 
 
 
@@ -97,9 +101,9 @@
 
 
 		.col-12.form-action
-			button(v-if="$route.name == 'edit'", @click.prevent="updateData()") Update
-			button(v-else, @click.prevent="addData()") Add
-			a(@click.prevent="deleteData()",href, v-if="$route.name == 'edit'", title="Delete").lnk.lnk-delete Delete
+			button(v-if="$route.name == 'edit'", @click.prevent="updateData(),pausePanZoom()") Update
+			button(v-else, @click.prevent="addData(),pausePanZoom()") Add
+			a(@click.prevent="deleteData(),pausePanZoom()",href, v-if="$route.name == 'edit'", title="Delete").lnk.lnk-delete Delete
 
 
 			
@@ -137,6 +141,15 @@ export default {
 	watch: {
 	},
 	methods: {
+		pausePanZoom(){
+			console.log("Pause PanZoom")
+			this.$store.dispatch('panZoomChange',false)
+			
+		},
+		resumePanZoom(){
+			console.log("Resume PanZoom")
+			this.$store.dispatch('panZoomChange',true)
+		},
 		saveImgButton(){
 			let app = this
 			let people = app.people
@@ -167,18 +180,23 @@ export default {
 		},
 		processFile(){
 			let app = this
+			let name = app.name.replace(/\s+/g, '-').toLowerCase()
+			let re = /(?:\.([^.]+))?$/
+			let ext = re.exec(app.img_obj.name)[1]
+			console.log(ext);
+			
 
 			let storageRef = app.firebase.storage().ref()
 
-			var imageRef = storageRef.child('photos/' + app.img_obj.name);
+			var imageRef = storageRef.child('photos/' + name + '.' + ext)
 
 			let task = imageRef.put(app.img_obj)
 
-			task.on('state_changed',																																				
+			task.on('state_changed',
 				snapshot =>{
-					var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+					var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
 					
-					console.log('Upload is ' + progress + '% done');
+					console.log('Upload is ' + progress + '% done')
 				}, 
 				error => {
 					switch (error.code) {
@@ -480,6 +498,7 @@ export default {
 	created() {
 		console.log("created")
 		this.stateValidation()
+		this.pausePanZoom()
 		console.log("-------")
 	},
 	updated() {

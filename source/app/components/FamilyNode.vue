@@ -15,12 +15,12 @@
 								span.person-item__info__year(v-if="personas[person].dates.birth") {{dateTransform(personas[person].dates.birth.seconds)}}
 						.person-item__action
 							router-link(:to="{name:'add'}").person-item__add
-			vfamilynode(v-if='family.relatives', :datos='family.relatives', :personas="personas")
+			FamilyNode(v-if='family.relatives', :datos='family.relatives', :personas="personas")
 </template>
 
 <script>
 export default {
-	name: "vfamilynode",
+	name: "FamilyNode",
 	props: ["datos","personas"],
 	data() {
 	  return {
@@ -28,6 +28,15 @@ export default {
 	},
 	watch: {},
 	methods: {
+		pausePanZoom(){
+			console.log("Pause PanZoom")
+			this.$store.dispatch('panZoomChange',false)
+			
+		},
+		resumePanZoom(){
+			console.log("Resume PanZoom")
+			this.$store.dispatch('panZoomChange',true)
+		},
 		parentsFlag(couple){
 			let classNames = ""
 			if(couple.length > 1){
@@ -71,13 +80,13 @@ export default {
 			if(currentRow == lowestRow){
 
 				// SCROLLING LEFT START
-				const fmly_wrapper = document.querySelector("#app")
-				let fmly_wrapper_bcr = fmly_wrapper.getBoundingClientRect()
+				// const fmly_wrapper = document.querySelector(".fmly-wrpr")
+				// let fmly_wrapper_bcr = fmly_wrapper.getBoundingClientRect()
 
-				const $fmly_row = document.querySelector('.fmly-row')
-				let $family_row_bcr = $fmly_row.getBoundingClientRect()
+				// const $fmly_row = document.querySelector('.fmly-row')
+				// let $family_row_bcr = $fmly_row.getBoundingClientRect()
 				
-				fmly_wrapper.scrollLeft += ($family_row_bcr.width / 2) - (fmly_wrapper_bcr.width / 2)
+				// fmly_wrapper.scrollLeft += ($family_row_bcr.width / 2) - (fmly_wrapper_bcr.width / 2)
 				// SCROLLING LEFT END
 
 				// old line
@@ -125,6 +134,8 @@ export default {
 					}
 					
 				}
+
+				this.resumePanZoom()
 				
 			}
 
@@ -176,11 +187,16 @@ export default {
 			return this.$store.state.lines
 		}
 	},
-	created() {},
+	created() {
+
+	},
 	mounted() {
 		this.$nextTick(function () {
 			this.makeLines()
   	})
+	},
+	beforeUpdate() {
+		
 	},
 	updated() {
 		this.makeLines()
