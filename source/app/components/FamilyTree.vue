@@ -1,14 +1,14 @@
 <template lang="pug">
 	.fmly-wrpr
 		#line.line
-		.maoma
-			//- a(href,@click.prevent="pausePanZoom()") CANCEL
-			//- a(href,@click.prevent="resumePanZoom()") RESUME
+
 		FamilyNode(
 			v-if="datos"
 			:datos='datos'
 			:personas="personas"
+			@centerPanZoom="centerPanZoom()"
 		)
+		
 		
 </template>
 
@@ -32,11 +32,11 @@ export default {
 		storePanZoom(){
 			if (this.storePanZoom) {
 				this.resumePanZoom()
-				console.log("store change resume panZoom");
+				// console.log("store change resume panZoom");
 				
 			} else {
 				this.pausePanZoom()
-				console.log("store change pause panZoom");
+				// console.log("store change pause panZoom");
 			}
 		}
 	},
@@ -53,6 +53,11 @@ export default {
 		}
 	},
 	methods: {
+		centerPanZoom(){
+			let app = this
+			const $fmly_wrpr = document.querySelector('.fmly-wrpr')
+			app.paneoZoom.centerOn($fmly_wrpr,"x")
+		},
 		resumePanZoom(){
 			let app = this
 			app.paneoZoom.resume()
@@ -74,36 +79,36 @@ export default {
 				y: transform.y,
 				scale: transform.scale
 			}
-			console.log(app.initialPanZoom)
+			// console.log(app.initialPanZoom)
 			app.paneoZoom.pause()
 			app.paneoZoom.moveTo(0,0)
 			app.paneoZoom.zoomAbs(0,0,1)
-			console.log(app.paneoZoom)
-			console.log("is paused")
+			// console.log(app.paneoZoom)
+			// console.log("is paused")
 		},
 		panZoom(){
 			let app = this
 			const $fmly_wrpr = document.querySelector('.fmly-wrpr')
 			
 			app.paneoZoom = panzoom($fmly_wrpr , {
-				filterKey: function(/* e, dx, dy, dz */) {
-					// don't let panzoom handle this event:
-					return true;
-				},
 				maxZoom: 1,
 				minZoom: 0.1
 			})
-			console.log("panZoom")			
+			// console.log("panZoom")
 		}
 	},
 	created() {},
 	mounted() {
+		let app = this
 		// pan and zoom activation
-		this.panZoom()
-		this.initialPanZoom = this.paneoZoom.getTransform()
+		app.panZoom()
+		app.initialPanZoom = app.paneoZoom.getTransform()
+		
+		// app.$nextTick(function () {
+
+		// })
 	},
 	beforeUpdate() {
-		// this.pausePanZoom()
 	},
 	updated() {
 		

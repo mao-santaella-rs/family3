@@ -359,18 +359,32 @@
 					zoomByRatio(clientX, clientY, ratio)
 				}
 
-				function centerOn(ui) {
-					var parent = ui.ownerSVGElement
-					if (!parent) throw new Error('ui element is required to be within the scene')
-
-					// TODO: should i use controller's screen CTM?
+				function centerOn(ui,axis=false) {
+					
 					var clientRect = ui.getBoundingClientRect()
-					var cx = clientRect.left + clientRect.width / 2
-					var cy = clientRect.top + clientRect.height / 2
-
+					var parent = ui.parentElement
 					var container = parent.getBoundingClientRect()
-					var dx = container.width / 2 - cx
-					var dy = container.height / 2 - cy
+					var cx;
+					var dx;
+					var cy;
+					var dy; 
+
+					if (axis) {
+						// just in x axis
+						cx = clientRect.left + (clientRect.width / 2)
+						dx = container.width / 2 - cx
+						dy = -(clientRect.top)
+					}else{
+						// do it in all axis
+						cx = clientRect.left + (clientRect.width / 2)
+						cy = clientRect.top + (clientRect.height / 2)
+
+						dx = container.width / 2 - cx
+						dy = container.height / 2 - cy
+					}
+
+					// console.log(dx, dy);
+					
 
 					internalMoveBy(dx, dy, true)
 				}
@@ -813,7 +827,7 @@
 						return
 					}
 					var options = collectOptions(panzoomScript)
-					console.log(options)
+					// console.log(options)
 					window[globalName] = createPanZoom(el, options);
 				}
 

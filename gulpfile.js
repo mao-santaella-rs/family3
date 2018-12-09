@@ -296,9 +296,9 @@ gulp.task('compress', done => {
 
 		.pipe(changed(carpeta.js.pub, {extension: '.js'}))
 
-		// .pipe(babel({
-		// 	presets: ['env']
-		// }))
+		.pipe(babel({
+			presets: ['env']
+		}))
 
 		// COMPRIME EL JAVASCRIPT
 		.pipe(uglify())

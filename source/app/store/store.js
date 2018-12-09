@@ -51,89 +51,68 @@ export const store = new Vuex.Store({
 				context.dispatch('orderLinesData', dbObject)
 			})
 		},
-		orderData: (context,objectP) => {
-			let flyCount = 1;
-			let usedObject = {};
-			let treObject = {
+		orderData: (context,databasePeople) => {
+			// para llevar el conteo de las familias
+			let familyCount = 1;
+			// para saber cuales personas ya estan dentro del treeObject
+			let usedPeople = {};
+			// para saber cuales personas no entraron en las familias directas, solo entrarian los familiares no directos
+			let nonUsedPeople = {};
+			// json para guardar en vuex para generar el arbol
+			let treeObject = {
 				"familia": {
 					"couple": []
 				}
 			};
 
-			const lowestRow = objectP[Object.keys(objectP)[0]].row;
-			// console.log('lowestRow: ' + lowestRow);
-			// const hiestRow = objectP[Object.keys(objectP)[Object.keys(objectP).length - 1]].row; 
-			// console.log('hiestRow: ' + hiestRow);
+			const lowestRow = databasePeople[Object.keys(databasePeople)[0]].row;
 
 			// loop en todos los elementos como llegan de firebase
-			for (let key in objectP) {
+			for (var key in databasePeople) {
 				
-
 				// si es = a lowest row
-				if (objectP[key].row == lowestRow) {
-					// console.log(objectP[key].name + " lowest ROW");
-
-					agregarTreeObject(treObject, "", key, true);
-
-					usedObject[key] = [];
-					usedObject[key].push("familia");
-
+				if (databasePeople[key].row == lowestRow) {
+					agregarTreeObject(treeObject, "", key, true);
+					usedPeople[key] = "familia";
 				} else {
-					// si encuentra mother en usados
-					if (findUsed(objectP[key].conections.mother)) {
-						let mother = objectP[key].conections.mother;
-						// console.log(objectP[key].name + " MOTHER: " + objectP[mother].name);
+					// si encuentra mother en usados se guarda key en treeObject debajo de mother 
+					if (findUsed(databasePeople[key].conections.mother)) {
+						let mother = databasePeople[key].conections.mother;
+						let newPath = usedPeople[mother] + ".relatives.familia" + (familyCount + 1);
 
-						let newPath = usedObject[mother][0] + ".relatives.familia" + (flyCount + 1);
-						agregarTreeObject(treObject, usedObject[mother][0], key, "familia" + (flyCount + 1), true);
-						// agrego key a usados
-						usedObject[key] = [];
-						usedObject[key].push(newPath);
+						agregarTreeObject(treeObject, usedPeople[mother], key, "familia" + (familyCount + 1), true);
+						usedPeople[key] = newPath;
 					}
-					// si encuentra father in usados
-					else if (findUsed(objectP[key].conections.father)) {
-						let father = objectP[key].conections.father;
-						// console.log(objectP[key].name + " FATHER: " + objectP[father].name);
-
-						let newPath = usedObject[father][0] + ".relatives.familia" + (flyCount + 1);
-						agregarTreeObject(treObject, usedObject[father][0], key, "familia" + (flyCount + 1), true);
-
-						// agrego key a usados
-						usedObject[key] = [];
-						usedObject[key].push(newPath);
+					// si encuentra father in usados se guarda key en treeObject debajo de father
+					else if (findUsed(databasePeople[key].conections.father)) {
+						let father = databasePeople[key].conections.father;
+						let newPath = usedPeople[father] + ".relatives.familia" + (familyCount + 1);
+						
+						agregarTreeObject(treeObject, usedPeople[father], key, "familia" + (familyCount + 1), true);
+						usedPeople[key] = newPath;
 					}
-				}
-				consoleObj();
-			}
-
-			for (let key in objectP) {
-				// console.log("***PERSONA C: " + objectP[key].name);
-				if (!usedObject[key]) {
-					// si encuentra spouse in usados
-					if (findUsed(objectP[key].conections.spouse)) {
-						let spouse = objectP[key].conections.spouse;
-						// console.log(objectP[key].name + " SI encontre SPOUSE: " + objectP[spouse].name);
-
-						agregarTreeObject(treObject, usedObject[spouse][0], key);
-						usedObject[key] = [];
-						usedObject[key].push(usedObject[spouse][0]);
+					// else is a non direct relative
+					else {
+						nonUsedPeople[key] = null
 					}
 				}
 			}
+			// now find spots for the non direct relatives
+			for (var key in nonUsedPeople) {
+				if (findUsed(databasePeople[key].conections.spouse)) {
+					let spouse = databasePeople[key].conections.spouse;
 
-			consoleObj();
-			// app.datos = treObject
-			context.commit('storeFamiliaData', treObject);
-
-			function consoleObj() {
-				// console.log("usedObject");
-				// console.log(usedObject);
-				// console.log("treeObject");
-				// console.log(treObject);
+					agregarTreeObject(treeObject, usedPeople[spouse], key);
+					usedPeople[key] = usedPeople[spouse];
+				}
 			}
 
+			
+			context.commit('storeFamiliaData', treeObject);
+			console.log(nonUsedPeople)
+			
 			function findUsed(key) {
-				let usados = Object.keys(usedObject);
+				let usados = Object.keys(usedPeople);
 				let resultado = false;
 				for (var i = 0; i < usados.length; i++) {
 					if (usados[i] == key) {
@@ -141,15 +120,6 @@ export const store = new Vuex.Store({
 					}
 				}
 				return resultado;
-			}
-
-			function returnKey(key) {
-				for (var i in objectP) {
-					if (objectP[i] == key) {
-						return i;
-					}
-				}
-				return false;
 			}
 
 			function agregarTreeObject(obj, path, key, familyId = false, relation = false) {
@@ -181,7 +151,7 @@ export const store = new Vuex.Store({
 						// y le agrego a 'couple' el key
 						obj[familyObj].relatives[familyId].couple.push(key);
 						// ahora le sumo 1 a el caunter para el nombre de la familia
-						flyCount = flyCount + 1;
+						familyCount = familyCount + 1;
 						// retorno para que pare la funcion
 						return true;
 					}
@@ -197,12 +167,12 @@ export const store = new Vuex.Store({
 				return agregarTreeObject(obj[parts[0]], parts.slice(1).join("."), key, familyId, relation);
 			}
 		},
-		orderLinesData: (context, objectP) => {
+		orderLinesData: (context, databasePeople) => {
 			let objectL = {}
-			for (let key in objectP){
-				let personMom = objectP[key].conections.mother
-				let personDad = objectP[key].conections.father
-				// console.log(objectP[key].name)
+			for (let key in databasePeople){
+				let personMom = databasePeople[key].conections.mother
+				let personDad = databasePeople[key].conections.father
+				// console.log(databasePeople[key].name)
 				
 				if (personMom && personDad){
 					// console.log("mom: " + personMom + " | dad: " + personDad)
@@ -233,13 +203,13 @@ export const store = new Vuex.Store({
 								let userP = doc.data();
 								// console.log(doc.data());
 
-								let userObjectP = {
+								let userdatabasePeople = {
 									'login': true,
 									'alias': userP.alias,
 									'uid': user.uid,
 									'email': user.email
 								}
-								context.commit('storeSessionData', userObjectP)
+								context.commit('storeSessionData', userdatabasePeople)
 
 							});
 						})
@@ -249,13 +219,13 @@ export const store = new Vuex.Store({
 					
 				} else {
 					// No user is signed in.
-					let userObjectP = {
+					let userdatabasePeople = {
 						'login': false,
 						'alias': null,
 						'uid': null,
 						'email': null
 					}
-					context.commit('storeSessionData', userObjectP)
+					context.commit('storeSessionData', userdatabasePeople)
 				}
 			});
 		},

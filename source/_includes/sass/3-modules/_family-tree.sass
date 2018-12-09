@@ -15,11 +15,16 @@
 .fmly-wrpr
 	display: inline-block
 	position: relative
+	cursor: grab
+	z-index: 0
 	+auto-height
 	&::after
 		clear: both
 		content: ""
 		display: block
+
+	&:active
+    cursor: grabbing
 
 .fmly
 	display: flex

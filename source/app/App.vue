@@ -1,29 +1,38 @@
 <template lang="pug">
 
 	#app.app
-		vHeader
+		Header
 		router-view(v-if="people")
-		vFamilyTree
-		//- vFamilyTree(:style="{ transform: 'scale( 0.'+ zoom +')'}")
-		//- .zoom
-		//- 	input(type="range", min="100", max="999", value="999", v-model="zoom")
+		FamilyTree(ref="fmlyt")
+		.control-panel
+			//- a(@click.prevent="stopScroll()",title="cancel scroll").btn--control
+			//- 	img(src="img/icons/scroll-icon.svg")
+			a(@click.prevent="centerPanZoom()",title="center tree").btn--control
+				img(src="img/icons/center-icon.svg")
 
 
 </template>
 
 <script>
-import vHeader from './components/Header.vue'
-import vFamilyTree from './components/FamilyTree.vue'
+import Header from './components/Header.vue'
+import FamilyTree from './components/FamilyTree.vue'
 export default {
 	name: "app",
 	components: {
-		vFamilyTree,vHeader
+		FamilyTree,Header
 	},
 	data(){
 		return{
 		}
 	},
-	methods:{},
+	methods:{
+		centerPanZoom() {
+    	this.$refs.fmlyt.centerPanZoom()
+    },
+		stopScroll() {
+    	this.$refs.fmlyt.stopScroll()
+    }
+	},
 	computed:{
 		people(){
 			return this.$store.state.personas

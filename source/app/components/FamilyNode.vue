@@ -6,14 +6,14 @@
 				.person(v-for='(person,index) in family.couple', :key='person+index', :class="'a' + person")
 					.person-item
 						.person-item__img(:style="{'background-image': 'url('+personas[person].img+')'}")
-							router-link.person-item__edit(:to="{name: 'edit' , params: { id: person }}")
+							router-link.person-item__edit(v-if="login",:to="{name: 'edit' , params: { id: person }}")
 						.person-item__info
 							.person-item__info__name
 								span {{personas[person].name}}
 							.person-item__info__others
 								span.person-item__info__nickname {{personas[person].nickname}}
 								span.person-item__info__year(v-if="personas[person].dates.birth") {{dateTransform(personas[person].dates.birth.seconds)}}
-						.person-item__action
+						.person-item__action(v-if="login")
 							router-link(:to="{name:'add'}").person-item__add
 			FamilyNode(v-if='family.relatives', :datos='family.relatives', :personas="personas")
 </template>
@@ -29,12 +29,12 @@ export default {
 	watch: {},
 	methods: {
 		pausePanZoom(){
-			console.log("Pause PanZoom")
+			// console.log("Pause PanZoom")
 			this.$store.dispatch('panZoomChange',false)
 			
 		},
 		resumePanZoom(){
-			console.log("Resume PanZoom")
+			// console.log("Resume PanZoom")
 			this.$store.dispatch('panZoomChange',true)
 		},
 		parentsFlag(couple){
@@ -54,14 +54,14 @@ export default {
 			}
 		},
 		dateTransform(timestamp){
-			var a = new Date(0);
-			a.setUTCSeconds(timestamp);
-			var months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-			var year = a.getUTCFullYear();
-			var month = months[a.getUTCMonth()];
-			var date = a.getUTCDate();
-			var time = date + ' ' + month + ' ' + year ;
-			return time;
+			var a = new Date(0)
+			a.setUTCSeconds(timestamp)
+			var months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+			var year = a.getUTCFullYear()
+			var month = months[a.getUTCMonth()]
+			var date = a.getUTCDate()
+			var time = date + ' ' + month + ' ' + year
+			return time
 		},
 		makeLines(){
 			const app = this
@@ -135,7 +135,8 @@ export default {
 					
 				}
 
-				this.resumePanZoom()
+				app.resumePanZoom()
+				app.$emit('centerPanZoom')
 				
 			}
 
@@ -185,6 +186,9 @@ export default {
 	computed:{
 		lines(){
 			return this.$store.state.lines
+		},
+		login(){
+			return this.$store.state.session.login
 		}
 	},
 	created() {
